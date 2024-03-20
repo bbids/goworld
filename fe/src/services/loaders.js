@@ -1,6 +1,14 @@
+import { redirect } from 'react-router-dom';
 import gameService from './game'
 
-export async function playLoader() 
+/**
+ * See
+ *  https://reactrouter.com/en/main/route/loader
+ * 
+ */
+
+
+export async function homePageLoader() 
 {
   const data = await gameService.get();
   console.log(data);
@@ -10,6 +18,5 @@ export async function playLoader()
 export async function createGameLoader()
 {
   const data = await gameService.createGame();
-  console.log(data);
-  return data;
+  return redirect(`/join/${data.gameId}`);
 }

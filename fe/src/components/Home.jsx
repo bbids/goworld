@@ -1,5 +1,9 @@
 import { Link, Outlet, useLoaderData } from "react-router-dom";
 
+/**
+ * GoWorld home page.
+ * @returns 
+ */
 const Home = () => {
   const data = useLoaderData();
 
