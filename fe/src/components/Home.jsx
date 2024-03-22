@@ -1,4 +1,5 @@
 import { Link, Outlet, useLoaderData } from "react-router-dom";
+import logger from '../utils/logger';
 
 /**
  * GoWorld home page.
@@ -7,7 +8,7 @@ import { Link, Outlet, useLoaderData } from "react-router-dom";
 const Home = () => {
   const data = useLoaderData();
 
-  console.log(data?.success);
+  logger.dev(data?.success);
 
   return (
     <>

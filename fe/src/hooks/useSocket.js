@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logger from '../utils/logger';
+
 
 /**
  * Use a visited flag to prevent React StrictMode and
@@ -18,12 +20,12 @@ const useSocket = (gameId) => {
     const newSocket = new WebSocket(`ws://localhost:3000/${gameId}`);
 
     newSocket.onopen = () => {
-      console.log('Connected to WebSocket server');
+      logger.dev('Connected to WebSocket server');
       setSocket(newSocket);
     };
 
     newSocket.onclose = () => {
-      console.log('Connection closed');
+      logger.dev('Connection closed');
       setSocket(null);
       connected = false;
     };
@@ -37,7 +39,7 @@ const useSocket = (gameId) => {
       // for now a simple message exchanger
       const binaryMsg = event.data;
       const stringMsg = await binaryMsg.text();
-      console.log('Received message:', stringMsg);
+      logger.dev('Received message:', stringMsg);
       /*
       Ideas for later:
         when an opponent arrives, broadcast game object
@@ -52,7 +54,7 @@ const useSocket = (gameId) => {
       if (socket) socket.close();
     };
 
-  }, [gameId, navigate]);
+  }, [socket, gameId, navigate]);
   return socket;
 };
 

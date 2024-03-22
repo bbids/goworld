@@ -1,3 +1,5 @@
+import logger from '../utils/logger';
+
 const baseUrl = '/play';
 
 const get = () => {
@@ -10,7 +12,7 @@ const get = () => {
     })
     .then(data => data)
     .catch(error => {
-      console.log(error);
+      logger.devError(error);
     });
 };
 
@@ -22,7 +24,7 @@ const createGame = () => {
       return response.json();
     })
     .catch(error => {
-      console.log(error);
+      logger.devError(error);
     });
 };
 
