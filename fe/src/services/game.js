@@ -4,14 +4,14 @@ const get = () => {
   return fetch(baseUrl)
     .then(response => {
       if (!response.ok)
-        throw new Error('???');
+        throw new Error('???', response);
 
       return response.json();
     })
     .then(data => data)
     .catch(error => {
       console.log(error);
-    })
+    });
 };
 
 const createGame = () => {
@@ -23,8 +23,8 @@ const createGame = () => {
     })
     .catch(error => {
       console.log(error);
-    })
-}
+    });
+};
 
 export default {
   get, createGame

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { homePageLoader, createGameLoader} from "./services/loaders";
+import { homePageLoader, createGameLoader } from "./loaders/loaders";
 
 import Home from "./components/Home";
 import CreateGame from "./components/CreateGame";
@@ -29,6 +29,6 @@ const router = createBrowserRouter([
     path: "/game/:id",
     Component: Game
   }
-])
+]);
 
 export default router;
