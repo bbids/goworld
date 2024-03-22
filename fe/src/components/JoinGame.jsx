@@ -14,7 +14,11 @@ const JoinGame = () => {
   return (
     <>
       <h1>Attempting to join game</h1>
-      {socket && <h2>Game ID: {gameId}</h2>}
+      {socket &&
+        <>
+          <h1>Game ID: <span id="gameId">{gameId}</span></h1>
+        </>
+      }
 
       <button onClick={() => {
         socket && socket.send("I CLICKED IT BAAAH, I CLICKED IT!");

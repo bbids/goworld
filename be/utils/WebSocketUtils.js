@@ -29,7 +29,10 @@ const createGameWebSocket = (gameId) => {
       console.log(`Client disconnected from game ${gameId}`);
       gameWebSockets[gameId].count -= 1;
       if (gameWebSockets[gameId].count == 0)
+      {
+        console.log('Closing WebSocket');
         gameWebSockets.delete(gameId);
+      }
     });
   });
 

@@ -1,5 +1,4 @@
 const playRouter = require('express').Router();
-
 const WebSocketUtils = require('../utils/WebSocketUtils');
 
 playRouter.get("/", (request, response) => {
@@ -7,17 +6,12 @@ playRouter.get("/", (request, response) => {
 });
 
 playRouter.get("/create_game", async (request, response) => {
-  const gameId = "awdwjid14ui";
+  // for now use uuid, can make string generator latern
+  const gameId = (Math.floor(Math.random()*(1e8 - 1e6) + 1e6).toString());
 
-  if (!WebSocketUtils.gameWebSockets[gameId])
-  {
-    await WebSocketUtils.createGameWebSocket(gameId);
-
-    console.log(`Created game ${gameId}`)
-  
-    response.status(201).json({ gameId });   
-  }
-  
+  await WebSocketUtils.createGameWebSocket(gameId);
+  console.log(`Created game ${gameId}`)
+  response.status(201).json({ gameId });   
 });
 
 playRouter.get("/end_game/:id", (request, response) => {
