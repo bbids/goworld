@@ -1,21 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logger from '../utils/logger';
-
-
-/**
- * Use a visited flag to prevent React StrictMode and
- * other potential causes to duplicate web sockets.
- */
-let connected = false;
 
 const useSocket = (gameId) => {
   const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
 
+  // prevent strict mode from duplicating, also
+  // other potential causes
+  const connected = useRef(false);
+
   useEffect(() => {
-    if (connected) return;
-    connected = true;
+    if (connected.current) return;
+    connected.current = true;
 
     const newSocket = new WebSocket(`ws://localhost:3000/${gameId}`);
 
@@ -27,7 +24,7 @@ const useSocket = (gameId) => {
     newSocket.onclose = () => {
       logger.dev('Connection closed');
       setSocket(null);
-      connected = false;
+      connected.current = false;
     };
 
     newSocket.onerror = () => {
@@ -36,10 +33,11 @@ const useSocket = (gameId) => {
     };
 
     newSocket.onmessage = async (event) => {
-      // for now a simple message exchanger
+      // https://developer.mozilla.org/en-US/docs/Web/API/Blob/text
       const binaryMsg = event.data;
       const stringMsg = await binaryMsg.text();
       logger.dev('Received message:', stringMsg);
+      logger.dev(event);
       /*
       Ideas for later:
         when an opponent arrives, broadcast game object
