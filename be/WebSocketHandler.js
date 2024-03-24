@@ -1,4 +1,4 @@
-const { gameWebSockets } = require('./utils/WebSocketUtils')
+const { WSS, gameData } = require('./utils/WebSocketUtils')
 
 module.exports = function WebSocketHandler(server) {
 
@@ -12,20 +12,30 @@ module.exports = function WebSocketHandler(server) {
    */
   server.on("upgrade", (request, socket, head) => {
     const gameId = request.url.substring(1);
-    console.log("GAME ID: ", gameId);
-    if (gameWebSockets[gameId]) {
-      if (gameWebSockets[gameId].count >= 2) {
-        /* Figure out how to send error code or message back */
-        socket.write('xd?');
-        socket.end("Game is full");
-        // socket.destroy();
-      }
-      else {
-        gameWebSockets[gameId].wss.handleUpgrade(request, socket, head, (ws) => {
-          gameWebSockets[gameId].wss.emit("connection", ws, request);
-          ++gameWebSockets[gameId].count;
+
+    // socket.end('HTTP/1.1 400 Bad Request');
+    if (!WSS[gameId] || !gameData[gameId]) return;
+
+    // later remove this, and instead add roles such as player/spectator
+    if (gameData[gameId].count >= 2) {
+      socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
+      socket.end();
+      return;
+    }
+
+    WSS[gameId].handleUpgrade(request, socket, head, (ws) => {
+      WSS[gameId].emit("connection", ws, request);
+      ++gameData[gameId].count;
+
+      // have the players, start the game
+      if (gameData[gameId].count == 2)
+      {
+        gameData[gameId].status = "GAME_START";
+        WSS[gameId].clients.forEach(client => {
+          client.send(JSON.stringify(gameData[gameId]));
         });
       }
-    }
+    });
   });
+
 };

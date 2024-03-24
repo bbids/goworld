@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       // gameService uses /play
-      '/play': {
+      '/api/play': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       }

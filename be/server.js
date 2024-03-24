@@ -14,6 +14,6 @@ WebSocketHandler(server);
 app.use(express.json());
 
 // controllers
-app.use('/play', playRouter);
+app.use('/api/play', playRouter);
 
 module.exports = server;

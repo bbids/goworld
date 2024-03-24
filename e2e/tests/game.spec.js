@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Online game room creation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/play');
     await page.getByRole('link', { name: 'create game' }).click();
   });
 
@@ -20,7 +20,7 @@ test.describe('Online game room creation', () => {
 test.describe('Joining a game room', () => {
   let gameId;
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/play');
     await page.getByRole('link', { name: 'create game' }).click();
     gameId = await page.locator('#gameId').textContent();
   });

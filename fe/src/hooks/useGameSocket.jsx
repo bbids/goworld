@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logger from '../utils/logger';
 
-const useSocket = (gameId) => {
+const useGameSocket = (gameId) => {
   const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
 
@@ -22,40 +22,29 @@ const useSocket = (gameId) => {
     };
 
     newSocket.onclose = () => {
-      logger.dev('Connection closed');
       setSocket(null);
       connected.current = false;
+      logger.dev('Connection closed');
+      navigate('/');
     };
 
     newSocket.onerror = () => {
+      newSocket.close();
       navigate('/');
-      alert('Game is full.');
-    };
-
-    newSocket.onmessage = async (event) => {
-      // https://developer.mozilla.org/en-US/docs/Web/API/Blob/text
-      const binaryMsg = event.data;
-      const stringMsg = await binaryMsg.text();
-      logger.dev('Received message:', stringMsg);
-      logger.dev(event);
-      /*
-      Ideas for later:
-        when an opponent arrives, broadcast game object
-        whose state is game_ongoing, and from that start
-        exchanging "messages" by placing stones on the board
-        the game object sends appropriate information, whose
-        turn is it etc.
-      */
     };
 
     return () => {
-      if (socket) socket.close();
+      if (socket)
+      {
+        socket.close(1001);
+      }
     };
 
   }, [socket, gameId, navigate]);
   return socket;
 };
 
+
 export {
-  useSocket
+  useGameSocket
 };

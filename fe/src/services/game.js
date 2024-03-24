@@ -1,6 +1,6 @@
 import logger from '../utils/logger';
 
-const baseUrl = '/play';
+const baseUrl = '/api/play';
 
 const get = () => {
   return fetch(baseUrl)

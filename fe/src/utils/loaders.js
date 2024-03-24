@@ -8,13 +8,6 @@ import gameService from '../services/game';
  */
 
 
-export async function homePageLoader()
-{
-  const data = await gameService.get();
-  if (data)
-    return data;
-}
-
 export async function createGameLoader()
 {
   const gameData = await gameService.createGame();
