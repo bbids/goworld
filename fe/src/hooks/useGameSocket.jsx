@@ -25,12 +25,12 @@ const useGameSocket = (gameId) => {
       setSocket(null);
       connected.current = false;
       logger.dev('Connection closed');
-      navigate('/');
+      navigate('/play');
     };
 
     newSocket.onerror = () => {
       newSocket.close();
-      navigate('/');
+      navigate('/play');
     };
 
     return () => {

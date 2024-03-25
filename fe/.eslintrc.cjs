@@ -22,6 +22,7 @@ module.exports = {
     ],
     '@stylistic/js/semi': ['error', 'always'],
     '@stylistic/js/indent': ['error', 2],
-    '@stylistic/js/no-trailing-spaces': 'error'
+    '@stylistic/js/no-trailing-spaces': 'error',
+    'react/prop-types': 0
   },
 }

@@ -2,11 +2,11 @@ import logger from '../utils/logger';
 
 const baseUrl = '/api/play';
 
-const get = () => {
+const getGamesData = () => {
   return fetch(baseUrl)
     .then(response => {
       if (!response.ok)
-        throw new Error('???', response);
+        throw new Error('??? Games data unavailable', response);
 
       return response.json();
     })
@@ -29,5 +29,5 @@ const createGame = () => {
 };
 
 export default {
-  get, createGame
+  getGamesData, createGame
 };

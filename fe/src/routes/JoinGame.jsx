@@ -4,7 +4,6 @@ import { useGameSocket } from "../hooks/useGameSocket.jsx";
 import { useEffect } from "react";
 
 import logger from '../utils/logger.js';
-import useHeartbeat from "../hooks/useHeartbeat.jsx";
 
 
 /**
@@ -15,7 +14,7 @@ const JoinGame = () => {
   const gameId = useParams().id;
   const socket = useGameSocket(gameId);
   const navigate = useNavigate();
-  useHeartbeat(socket);
+  //useHeartbeat(socket);
 
   useEffect(() => {
     if (!socket) return;

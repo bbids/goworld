@@ -1,8 +1,9 @@
 const playRouter = require('express').Router();
-const { createGameWebSocket } = require('../utils/WebSocketUtils');
+const logger = require('../utils/logger');
+const { createGameWebSocket, gameData } = require('../utils/WebSocketUtils');
 
 playRouter.get("/", (request, response) => {
-  response.status(200).json({ "success": true });
+  response.status(200).json(gameData);
 });
 
 playRouter.get("/create_game", async (request, response) => {

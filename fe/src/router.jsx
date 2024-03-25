@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { createGameLoader } from "./utils/loaders";
+import { createGameLoader, getGamesLoader } from "./utils/loaders";
 
 import Home from "./components/Home";
 import Game from "./routes/Game";
 import JoinGame from "./routes/JoinGame";
 import ErrorPage from "./routes/ErrorPage";
-import CreateGame from "./routes/CreateGame";
+import Play from "./routes/Play";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +16,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: "play",
-        element: <CreateGame />
+        element: <Play />,
+        loader: getGamesLoader
       },
       {
         path: "/create_game",

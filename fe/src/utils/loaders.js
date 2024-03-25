@@ -8,11 +8,19 @@ import gameService from '../services/game';
  */
 
 
-export async function createGameLoader()
-{
+export async function createGameLoader() {
   const gameData = await gameService.createGame();
   if (!gameData)
     return redirect('/');
 
   return redirect(`/join/${gameData.gameId}`);
+}
+
+export async function getGamesLoader() {
+  const gamesData = await gameService.getGamesData();
+  if (Object.keys(gamesData).length === 0
+      && gamesData.constructor === Object)
+    return null;
+
+  return gamesData;
 }
