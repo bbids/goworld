@@ -8,7 +8,7 @@ const OpenGameCard = ({ gameData }) => {
       <p>{gameId}</p>
       <p>status: {status}</p>
       <p>{count} / 2</p>
-      <Link to={`/join/${gameId}`}>Join</Link>
+      <Link to={`/game/${gameId}`}>Join</Link>
     </div>
   );
 };

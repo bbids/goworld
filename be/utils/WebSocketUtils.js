@@ -23,26 +23,54 @@ const createGameWebSocket = (gameId) => {
     logger.dev(`A new client connected to game ${gameId}`);
 
     ws.on('message', (message) => {
-      const game = JSON.parse(message);
-
-      if (game.status === 'PONG')
+      const data = JSON.parse(message);
+      
+      // TBD
+      // demo 0.1 should include PONG, MESSAGE
+      // other items are to be decided via  
+      // requirements selection process proceeding
+      switch (data.type)
       {
-        ws.isAlive = true;
-        return;
+        case 'PONG':
+          ws.isAlive = true;
+          return;
+        case 'STATUS':
+          // related to connectivity, a person may lose
+          // connection, server broadcasts to clients, or
+          // client does something sus
+          return;
+        case 'GAME_DATA':
+          // the whole JSON, includes all moves, messages,
+          // events, should be server -> client directional
+          // mainly for spectators that might join
+          return;
+        case 'MESSAGE':
+          // chat box
+          return;
+        case 'EVENT':
+          // game start, game over, undo, AI analyze, 
+          return;
+        case 'PASS':
+          // two subsequentes passes = game over
+        case 'STONE_PLACEMENT':
+          // stone placement, broadcast to spectators and players
+          return;
+        default:
+          return;
       }
 
       // For now send message to everyone except sender
-      wss.clients.forEach((client) => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(message.toString())
-        }
-      });
+      //wss.clients.forEach((client) => {
+      //  if (client !== ws && client.readyState === WebSocket.OPEN) {
+      //    client.send(message.toString())
+      //  }
+      //});
     });
 
     ws.on('close', () => {
       logger.dev(`Client disconnected from game ${gameId}`);
-      gameData[gameId].count -= 1;
-      if (gameData[gameId].count <= 0) cleanup(gameId)
+      gameData.get(gameId).count -= 1;
+      if (gameData.get(gameId).count <= 0) cleanup(gameId)
     });
 
     ws.on('error', (err) => {
@@ -54,7 +82,8 @@ const createGameWebSocket = (gameId) => {
   const interval = setInterval(() => {
     wss.clients.forEach((ws) => {
       // for now terminate, otherwise a mechanism for recovery
-      if (ws.isAlive === false) return ws.terminate();
+      if (ws.isAlive === false) 
+        return ws.terminate();
 
       ws.isAlive = false;
       ws.send(JSON.stringify({ status: 'PING' }));
@@ -65,13 +94,13 @@ const createGameWebSocket = (gameId) => {
     clearInterval(interval);
   });
 
-  gameData[gameId] = {
+  gameData.set(gameId, {
     gameId,
     count: 0,
     status: 'WAITING'
-  }
+  })
 
-  WSS[gameId] = wss;
+  WSS.set(gameId, wss);
 };
 
 const cleanup = (gameId) => {

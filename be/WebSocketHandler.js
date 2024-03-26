@@ -1,3 +1,4 @@
+const logger = require('./utils/logger');
 const { WSS, gameData } = require('./utils/WebSocketUtils')
 
 module.exports = function WebSocketHandler(server) {
@@ -14,25 +15,31 @@ module.exports = function WebSocketHandler(server) {
     const gameId = request.url.substring(1);
 
     // socket.end('HTTP/1.1 400 Bad Request');
-    if (!WSS[gameId] || !gameData[gameId]) return;
+    if (!WSS.has(gameId) || !gameData.has(gameId)) {
+      socket.end('HTTP:/1.1 400 Bad Request');
+      return;
+    };
 
-    // later remove this, and instead add roles such as player/spectator
-    if (gameData[gameId].count >= 2) {
-      socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
-      socket.end();
+    // handle spectator mode
+    if (gameData.get(gameId).count >= 2) {
+      WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
+        // logger.dev(request);
+        WSS.get(gameId).emit("connection", ws, request);
+        ws.send(JSON.stringify({ status: 'SPECTATOR' }));
+      });
       return;
     }
 
-    WSS[gameId].handleUpgrade(request, socket, head, (ws) => {
-      WSS[gameId].emit("connection", ws, request);
-      ++gameData[gameId].count;
+    WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
+      WSS.get(gameId).emit("connection", ws, request);
+      ++gameData.get(gameId).count;
 
       // have the players, start the game
-      if (gameData[gameId].count == 2)
+      if (gameData.get(gameId).count == 2)
       {
-        gameData[gameId].status = "GAME_START";
-        WSS[gameId].clients.forEach(client => {
-          client.send(JSON.stringify(gameData[gameId]));
+        gameData.get(gameId).status = "GAME_START";
+        WSS.get(gameId).clients.forEach(client => {
+          client.send(JSON.stringify(gameData.get(gameId)));
         });
       }
     });

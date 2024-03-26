@@ -28,6 +28,23 @@ const createGame = () => {
     });
 };
 
+const checkGameExists = (gameId) => {
+  return fetch(`${baseUrl}/game/${gameId}`)
+    .then(response => {
+      logger.dev(response);
+      if (response.status === 404)
+        throw new Error(`Game not found.`);
+      else if (response.status === 403)
+        throw new Error('Game is full.');
+      else if (!response.ok)
+        throw new Error(`Game not available.`);
+      return response.json();
+    })
+    .catch(error => {
+      logger.devError(error);
+    });
+};
+
 export default {
-  getGamesData, createGame
+  getGamesData, createGame, checkGameExists
 };

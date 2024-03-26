@@ -1,14 +1,21 @@
-import { Link, useLoaderData } from 'react-router-dom';
-import GameInfoList from '../components/OpenGamesList';
+import { useLoaderData } from 'react-router-dom';
+import OpenGamesList from '../components/OpenGamesList';
+import SearchGameCard from '../components/SearchGameCard';
+import { useState } from 'react';
 
+/**
+ * Will manage searching/creating games, spectate options, ladder
+ * @returns Play.RouteComponent
+ */
 const Play = () => {
+  const [searching, setSearching] = useState(false);
   const gamesData = useLoaderData();
 
   return (
     <>
-      <Link to="/create_game">create game</Link>
+      <SearchGameCard searching={searching} setSearching={setSearching} />
 
-      <GameInfoList gamesData={gamesData}/>
+      <OpenGamesList gamesData={gamesData}/>
     </>
   );
 };
