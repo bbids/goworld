@@ -40,7 +40,10 @@ const Game = () => {
     <div id='game'>
       <p>We need a board component. A chat perhaps as well ..</p>
       <button onClick={() => {
-        wsState.socket.send(JSON.stringify({ msg: 'HI!'}));
+        wsState.websocket.instance.send(JSON.stringify({
+          type: 'MESSAGE',
+          message: 'HI!'
+        }));
       }}>sayHi</button>
     </div>
   );

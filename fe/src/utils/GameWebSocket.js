@@ -7,7 +7,7 @@ import logger from "./logger";
  */
 function GameWebSocket(wsUrl)
 {
-  let _messageListeners = [];
+  let _eventListeners = [];
 
   this.instance = new WebSocket(wsUrl);
 
@@ -40,38 +40,36 @@ function GameWebSocket(wsUrl)
 
   this.instance.onmessage = (event) => {
     const wsData = JSON.parse(event.data);
-    _messageListeners.forEach(listener => {
-      listener(wsData);
-    });
-    /*
     switch (wsData.type)
     {
-    case 'event':
-      return;
-    case 'status':
-      return;
-    default:
-      _messageListeners.forEach(listener => {
+    case 'EVENT':
+      _eventListeners.forEach(listener => {
         listener(wsData);
       });
-      return;
-    } */
+      break;
+    case 'PING':
+      this.instance.send(JSON.stringify({ type: 'PONG' }));
+      break;
+    case 'SPECTATOR':
+      logger.dev('You are a spectator.');
+      break;
+    case 'MESSAGE':
+      logger.dev(wsData.message);
+      break;
+    default:
+      _eventListeners.forEach(listener => {
+        listener(wsData);
+      });
+    }
   };
 
   this.addEventListener = (eventName, callback) => {
-    _messageListeners.push((wsData) => {
+    _eventListeners.push((wsData) => {
       // check event
-      if (wsData.status === eventName)
+      if (wsData.eventName === eventName)
         callback(wsData);
     });
   };
-
-  /**
-   * Server-Client connection verification using ping pong method
-   */
-  this.addEventListener('PING', () => {
-    this.instance.send(JSON.stringify({ status: 'PONG' }));
-  });
 
   /**
    * Client-side check if user is still rendering the game
@@ -79,21 +77,14 @@ function GameWebSocket(wsUrl)
    * instead of directly closing the socket if game doesn't render.
    */
   const _heartbeat = () => {
-    const _ping = () => {
-      const game = document.getElementById('game');
-      if (!game) {
-        logger.dev('Client side ping verification failed. ');
-        return false;
-      }
-      return true;
-    };
     const interval = setInterval(() => {
       if (this.instance.readyState !== WebSocket.OPEN)
       {
         clearInterval(interval);
       }
-      else if (!_ping())
+      else if (!document.getElementById('game'))
       {
+        logger.dev('Client side ping verification failed. ');
         this.instance.close();
         clearInterval(interval);
       }

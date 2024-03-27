@@ -25,7 +25,12 @@ module.exports = function WebSocketHandler(server) {
       WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
         // logger.dev(request);
         WSS.get(gameId).emit("connection", ws, request);
-        ws.send(JSON.stringify({ status: 'SPECTATOR' }));
+        ws.send(JSON.stringify({ 
+          type: 'SPECTATOR',
+        }));
+
+        // for now increase
+        ++gameData.get(gameId).count;
       });
       return;
     }
@@ -39,7 +44,11 @@ module.exports = function WebSocketHandler(server) {
       {
         gameData.get(gameId).status = "GAME_START";
         WSS.get(gameId).clients.forEach(client => {
-          client.send(JSON.stringify(gameData.get(gameId)));
+          client.send(JSON.stringify({
+            type: 'EVENT',
+            eventName: 'GAME_START',
+            data: gameData.get(gameId)
+          }));
         });
       }
     });

@@ -45,6 +45,11 @@ const createGameWebSocket = (gameId) => {
           // mainly for spectators that might join
           return;
         case 'MESSAGE':
+          wss.clients.forEach((client) => {
+            if (client !== ws) {
+              client.send(JSON.stringify(data));
+            }
+          })
           // chat box
           return;
         case 'EVENT':
@@ -86,7 +91,7 @@ const createGameWebSocket = (gameId) => {
         return ws.terminate();
 
       ws.isAlive = false;
-      ws.send(JSON.stringify({ status: 'PING' }));
+      ws.send(JSON.stringify({ type: 'PING' }));
     })
   }, 30000);
 
