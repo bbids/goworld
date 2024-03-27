@@ -21,5 +21,5 @@ export async function joinGameLoader({ params }) {
   const response = await gameService.checkGameExists(params.gameId);
   if (!response)
     return redirect('/play');
-  return null;
+  return response;
 }

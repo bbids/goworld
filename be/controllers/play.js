@@ -12,7 +12,7 @@ playRouter.get("/create_game", async (request, response) => {
 
   await createGameWebSocket(gameId);
   console.log(`Created game ${gameId}`)
-  response.status(201).json({ gameId });   
+  response.status(201).json(gameData.get(gameId));   
 });
 
 playRouter.get("/game/:id", async (request, response) => {

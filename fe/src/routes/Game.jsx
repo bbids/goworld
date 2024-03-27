@@ -27,15 +27,6 @@ const Game = () => {
     wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
   }, [wsState, wsDispatch, gameId]);
 
-  // useEffect(() => {
-  //   wsState.websocket.addEventListener('GAME_START', (wsData) => {
-  //     wsDispatch({ type: 'SET_GAME', payload: wsData });
-  //   });
-  // }, [wsDispatch, wsState]);
-
-  // fetch role of the player (spectator, player)
-
-
   return (
     <div id='game'>
       <p>We need a board component. A chat perhaps as well ..</p>
