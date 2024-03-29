@@ -11,20 +11,19 @@ function GameWebSocket(wsUrl)
 
   this.instance = new WebSocket(wsUrl);
 
-  this.instance.onopen = (event) => {
-    logger.dev('onopen: ', event);
+  this.instance.addEventListener('open', () => {
     logger.dev('Connected to WebSocket Server');
-    this.addEventListener('GAME_START', _heartbeat);
-  };
+    this.addCustomEventListener('GAME_START', _heartbeat);
+  });
 
-  this.instance.onclose = () => {
+  this.instance.addEventListener('close', () => {
     logger.dev('Closed connection to WebSocket Server');
-  };
+  });
 
-  this.instance.onerror = (error) => {
+  this.instance.addEventListener('error', (error) => {
     this.instance.close();
     logger.devError(error);
-  };
+  });
 
   /**
    * type: event
@@ -36,6 +35,8 @@ function GameWebSocket(wsUrl)
    *
    * type: status
    * connection...
+   *
+   * Todo: managing game state by events
    */
 
   this.instance.onmessage = (event) => {
@@ -51,6 +52,9 @@ function GameWebSocket(wsUrl)
       this.instance.send(JSON.stringify({ type: 'PONG' }));
       break;
     case 'SPECTATOR':
+      /* spectator always misses the GAME_START event
+        so we put GAME_START stuff here as well */
+      _heartbeat();
       logger.dev('You are a spectator.');
       break;
     case 'MESSAGE':
@@ -63,9 +67,12 @@ function GameWebSocket(wsUrl)
     }
   };
 
-  this.addEventListener = (eventName, callback) => {
+  /**
+   * @param {string} eventName custom event
+   * @param {Function} callback
+   */
+  this.addCustomEventListener = (eventName, callback) => {
     _eventListeners.push((wsData) => {
-      // check event
       if (wsData.eventName === eventName)
         callback(wsData);
     });

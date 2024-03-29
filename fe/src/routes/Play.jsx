@@ -1,19 +1,52 @@
-import { useLoaderData } from 'react-router-dom';
 import OpenGamesList from '../components/OpenGamesList';
 import SearchGameCard from '../components/SearchGameCard';
+import { useContext, useEffect, useState } from 'react';
+import logger from '../utils/logger';
+import gameService from '../services/game';
+import { WebSocketContext } from '../contexts/WebSocketContext';
 
 /**
  * Will manage searching/creating games, spectate options, ladder
- * @returns Play.RouteComponent
+ * @returns
  */
 const Play = () => {
-  const gamesData = useLoaderData();
+  const { wsState } = useContext(WebSocketContext);
+  const [gamesData, setGamesData] = useState({});
+
+  useEffect(() => {
+    /**
+     * (for now) remove game room that was created
+     * by the local user
+     * (later) more options to choose from
+     * @param {Object} gamesData
+     * @returns
+     */
+    const filterGamesData = (gamesData) => {
+      if (!wsState.game) return gamesData;
+      const filteredData = {};
+      for (const gameId in gamesData) {
+        if (gameId !== wsState.game.gameId) {
+          Object.defineProperty(filteredData, gameId, gamesData.gameId);
+        }
+      }
+      return filteredData;
+    };
+
+    gameService
+      .getGamesData()
+      .then(data => {
+        setGamesData(filterGamesData(data));
+      })
+      .catch(error => {
+        logger.devError(error);
+      });
+  }, [wsState]);
 
   return (
     <>
       <SearchGameCard />
 
-      <OpenGamesList gamesData={gamesData}/>
+      <OpenGamesList gamesData={gamesData} />
     </>
   );
 };

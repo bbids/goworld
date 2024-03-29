@@ -17,7 +17,7 @@ export async function getGamesLoader() {
   return gamesData;
 }
 
-export async function joinGameLoader({ params }) {
+export async function gameValidLoader({ params }) {
   const response = await gameService.checkGameExists(params.gameId);
   if (!response)
     return redirect('/play');

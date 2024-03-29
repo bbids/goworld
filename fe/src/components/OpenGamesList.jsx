@@ -1,17 +1,19 @@
 import OpenGameCard from './OpenGameCard';
 
 const OpenGamesList = ({ gamesData }) => {
-  if (!gamesData) return (
-    <p>No games available.</p>
-  );
+  const waitingGames = Object.values(gamesData).filter((game => {
+    return game.status === 'WAITING';
+  }));
 
   return (
     <div className='gamesList'>
-      {Object.values(gamesData)
-        .filter(gameData => gameData.status === 'WAITING')
-        .map(gameData =>
-          <OpenGameCard key={gameData.gameId} gameData={gameData} />
-        )}
+      {waitingGames.length > 0 ?
+        waitingGames.map(game =>
+          <OpenGameCard key={game.gameId} gameData={game} />
+        )
+        :
+        <p>No games available</p>
+      }
     </div>
   );
 };

@@ -10,7 +10,6 @@ const getGamesData = () => {
 
       return response.json();
     })
-    .then(data => data)
     .catch(error => {
       logger.devError(error);
     });
@@ -31,7 +30,6 @@ const createGame = () => {
 const checkGameExists = (gameId) => {
   return fetch(`${baseUrl}/game/${gameId}`)
     .then(response => {
-      logger.dev(response);
       if (response.status === 404)
         throw new Error(`Game not found.`);
       else if (response.status === 403)

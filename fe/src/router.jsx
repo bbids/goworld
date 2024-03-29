@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { getGamesLoader, joinGameLoader } from "./utils/loaders";
+import { gameValidLoader } from "./utils/loaders";
 
 import { WebSocketContextProvider } from "./contexts/WebSocketContext";
 
-import Home from "./components/Home";
+import Home from "./routes/Home";
 import Game from "./routes/Game";
 import ErrorPage from "./routes/ErrorPage";
 import Play from "./routes/Play";
@@ -23,12 +23,11 @@ const router = createBrowserRouter([
       {
         path: "play",
         element: <Play />,
-        loader: getGamesLoader
       },
       {
         path: "/game/:gameId",
         element: <Game />,
-        loader: joinGameLoader
+        loader: gameValidLoader
       },
     ]
   },

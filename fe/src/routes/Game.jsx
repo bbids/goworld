@@ -11,7 +11,7 @@ import GameWebSocket from "../utils/GameWebSocket";
 /**
  * This route component should manage the actual
  * gameplay screen
- * @returns Game.RouteComponent
+ * @returns
  */
 const Game = () => {
   const { wsState, wsDispatch } = useContext(WebSocketContext);
@@ -24,6 +24,10 @@ const Game = () => {
 
     const url = `ws://localhost:3000/${gameId}`;
     const websocket = new GameWebSocket(url);
+    websocket.addCustomEventListener('GAME_START', (wsData) => {
+      wsDispatch({ type: 'SET_GAME', payload: wsData.data});
+    });
+
     wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
   }, [wsState, wsDispatch, gameId]);
 
