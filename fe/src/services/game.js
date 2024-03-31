@@ -6,7 +6,7 @@ const getGamesData = () => {
   return fetch(baseUrl)
     .then(response => {
       if (!response.ok)
-        throw new Error('??? Games data unavailable', response);
+        throw new Error('Games data unavailable', response);
 
       return response.json();
     })
@@ -19,7 +19,7 @@ const createGame = () => {
   return fetch(`${baseUrl}/create_game`)
     .then(response => {
       if (!response.ok)
-        throw new Error('*???');
+        throw new Error('Game creation service is unavailable.');
       return response.json();
     })
     .catch(error => {
@@ -35,7 +35,7 @@ const checkGameExists = (gameId) => {
       else if (response.status === 403)
         throw new Error('Game is full.');
       else if (!response.ok)
-        throw new Error(`Game not available.`);
+        throw new Error(`Game data not available.`);
       return response.json();
     })
     .catch(error => {

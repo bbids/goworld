@@ -1,4 +1,4 @@
-import logger from "./logger";
+import logger from "../utils/logger";
 
 /**
  * Out game's WebSocket Wrapper constructor.

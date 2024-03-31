@@ -4,7 +4,7 @@ import { useContext } from "react";
 
 import gameService from '../services/game.js';
 import logger from "../utils/logger.js";
-import GameWebSocket from "../utils/GameWebSocket.js";
+import GameWebSocket from "../webSocket/GameWebSocket.js";
 import { WebSocketContext } from "../contexts/WebSocketContext.jsx";
 
 /**

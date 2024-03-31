@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { WebSocketContext } from "../contexts/WebSocketContext";
 import { useParams } from "react-router-dom";
-import GameWebSocket from "../utils/GameWebSocket";
+import GameWebSocket from "../webSocket/GameWebSocket";
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
