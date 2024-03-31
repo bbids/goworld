@@ -11,7 +11,6 @@ playRouter.get("/create_game", async (request, response) => {
   const gameId = (Math.floor(Math.random()*(1e8 - 1e6) + 1e6)).toString();
 
   await createGameWebSocket(gameId);
-  console.log(`Created game ${gameId}`)
   response.status(201).json(gameData.get(gameId));   
 });
 

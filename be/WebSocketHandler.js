@@ -1,4 +1,3 @@
-const logger = require('./utils/logger');
 const { WSS, gameData } = require('./utils/WebSocketUtils')
 
 module.exports = function WebSocketHandler(server) {
