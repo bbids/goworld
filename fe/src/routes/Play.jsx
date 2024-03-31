@@ -26,7 +26,8 @@ const Play = () => {
       const filteredData = {};
       for (const gameId in gamesData) {
         if (gameId !== wsState.game.gameId) {
-          Object.defineProperty(filteredData, gameId, gamesData.gameId);
+          // todo: fix gamesData (maybe) to not use string gameId as key
+          Object.defineProperty(filteredData, gameId, gamesData[gameId]);
         }
       }
       return filteredData;

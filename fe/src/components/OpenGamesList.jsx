@@ -6,7 +6,7 @@ const OpenGamesList = ({ gamesData }) => {
   }));
 
   return (
-    <div className='gamesList'>
+    <div className='gamesList' data-testid='gamesList'>
       {waitingGames.length > 0 ?
         waitingGames.map(game =>
           <OpenGameCard key={game.gameId} gameData={game} />

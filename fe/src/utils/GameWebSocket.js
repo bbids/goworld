@@ -78,27 +78,35 @@ function GameWebSocket(wsUrl)
     });
   };
 
-  /**
-   * Client-side check if user is still rendering the game
-   * Potential for pausing the connection, if user leaves
-   * instead of directly closing the socket if game doesn't render.
-   */
-  const _heartbeat = () => {
-    const interval = setInterval(() => {
-      if (this.instance.readyState !== WebSocket.OPEN)
-      {
-        clearInterval(interval);
-      }
-      else if (!document.getElementById('game'))
-      {
-        logger.dev('Client side ping verification failed. ');
-        this.instance.close();
-        clearInterval(interval);
-      }
-    }, 5000);
-  };
-
   return this;
 }
 
+/**
+ * Client-side check if user is still rendering the game
+ * Potential for pausing the connection, if user leaves
+ * instead of directly closing the socket if game doesn't render.
+ */
+const _heartbeat = () => {
+  const interval = setInterval(() => {
+    if (this.instance.readyState !== WebSocket.OPEN)
+    {
+      clearInterval(interval);
+    }
+    else if (!document.getElementById('game'))
+    {
+      logger.dev('Client side ping verification failed. ');
+      this.instance.close();
+      clearInterval(interval);
+    }
+  }, 5000);
+};
+
 export default GameWebSocket;
+
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+
+  it('test works', () => {
+    expect(1).toBe(1);
+  });
+}
