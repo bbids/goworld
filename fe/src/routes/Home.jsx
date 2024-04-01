@@ -14,9 +14,9 @@ const Home = () => {
   useEffect(() => {
     if (location.pathname === '/') {
       // close the game queue
-      if (wsState.game?.status === 'WAITING') {
+      if (wsState.inQueue) {
         wsState.websocket.instance.close();
-        wsDispatch({ type: 'SET_GAME', payload: null });
+        wsDispatch({ type: 'SET_INQUEUE', payload: false });
       }
     }
   }, [location, wsState, wsDispatch]);
@@ -26,7 +26,7 @@ const Home = () => {
       <h1>Go World</h1>
       <NavBar />
       <hr />
-      <Outlet wsState={wsState} wsDispatch={wsDispatch}/>
+      <Outlet/>
     </>
   );
 };

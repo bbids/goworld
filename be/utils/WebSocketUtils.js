@@ -25,24 +25,10 @@ const createGameWebSocket = (gameId) => {
     ws.on('message', (message) => {
       const data = JSON.parse(message);
       
-      // TBD
-      // demo 0.1 should include PONG, MESSAGE
-      // other items are to be decided via  
-      // requirements selection process proceeding
       switch (data.type)
       {
         case 'PONG':
           ws.isAlive = true;
-          return;
-        case 'STATUS':
-          // related to connectivity, a person may lose
-          // connection, server broadcasts to clients, or
-          // client does something sus
-          return;
-        case 'GAME_DATA':
-          // the whole JSON, includes all moves, messages,
-          // events, should be server -> client directional
-          // mainly for spectators that might join
           return;
         case 'MESSAGE':
           wss.clients.forEach((client) => {
@@ -50,16 +36,23 @@ const createGameWebSocket = (gameId) => {
               client.send(JSON.stringify(data));
             }
           })
-          // chat box
           return;
         case 'EVENT':
-          // game start, game over, undo, AI analyze, 
-          return;
-        case 'PASS':
-          // two subsequentes passes = game over
-        case 'STONE_PLACEMENT':
-          // stone placement, broadcast to spectators and players
-          return;
+          // todo like in fe: handleEvent() ..
+          if (data.eventName === 'GAME_READY') {
+            gameData.get(gameId).readyCount += 1;
+            if (gameData.get(gameId).readyCount !== 2) break;
+
+            WSS.get(gameId).clients.forEach(client => {
+              // todo: different way to manage spectators
+              gameData.get(gameId).status = "GAME_START";
+              client.send(JSON.stringify({
+                type: 'EVENT',
+                eventName: 'GAME_START',
+                mutation: gameData.get(gameId)
+              }));
+            });
+          }
         default:
           return;
       }
@@ -101,9 +94,10 @@ const createGameWebSocket = (gameId) => {
 
   gameData.set(gameId, {
     gameId,
-    count: 0,
-    status: 'WAITING'
-  })
+    count: 0, /* players + spectators */
+    status: 'WAITING',
+    readyCount: 0, /* players */
+  });
 
   WSS.set(gameId, wss);
 };

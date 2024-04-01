@@ -20,20 +20,16 @@ const SearchGameCard = () => {
       .createGame()
       .then(gameData => {
         const websocket = new GameWebSocket(`ws://localhost:3000/${gameData.gameId}`);
-        wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
-        wsDispatch({ type: 'SET_GAME', payload: gameData });
 
-        websocket.addCustomEventListener('GAME_START', (wsData) => {
-          navigate(`/game/${gameData.gameId}`);
-          wsDispatch({ type: 'SET_GAME', payload: wsData.data });
+        websocket.instance.addEventListener('open', () => {
+          wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
+          wsDispatch({ type: 'SET_INQUEUE', payload: { gameId: gameData.gameId } });
+
+          // todo: add feature for 'once only' events
+          websocket.addCustomEventListener('GAME_READY', () => {
+            navigate(`/game/${gameData.gameId}`);
+          });
         });
-
-        websocket.instance.addEventListener('close', () => {
-          wsDispatch({ type: 'SET_GAME', payload: null });
-        });
-
-        // event listener for any game related changes, that would
-        // automatically update the game state
       })
       .catch(error => {
         logger.devError(error);
@@ -42,12 +38,12 @@ const SearchGameCard = () => {
 
   return (
     <>
-      {wsState.game?.status === 'WAITING' ?
+      {wsState.inQueue ?
         <>
           <h1>Attempting to join game</h1>
           <button onClick={() => {
             wsState.websocket.instance.close();
-            wsDispatch({ type: 'SET_GAME', payload: null });
+            wsDispatch({ type: 'SET_INQUEUE', payload: false });
           }}>Stop</button>
         </>
         :

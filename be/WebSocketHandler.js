@@ -21,16 +21,15 @@ module.exports = function WebSocketHandler(server) {
 
     // handle spectator mode
     if (gameData.get(gameId).count >= 2) {
-      WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
-        // logger.dev(request);
-        WSS.get(gameId).emit("connection", ws, request);
-        ws.send(JSON.stringify({ 
-          type: 'SPECTATOR',
-        }));
-
-        // for now increase
-        ++gameData.get(gameId).count;
-      });
+      // WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
+      //   WSS.get(gameId).emit("connection", ws, request);
+      //   // for now increase
+      //   ++gameData.get(gameId).count;
+      //   ws.send(JSON.stringify({ 
+      //     type: 'SPECTATOR',
+      //     mutation: gameData.get(gameId)
+      //   }));
+      // });
       return;
     }
 
@@ -39,14 +38,13 @@ module.exports = function WebSocketHandler(server) {
       ++gameData.get(gameId).count;
 
       // have the players, start the game
-      if (gameData.get(gameId).count == 2)
+      if (gameData.get(gameId).count === 2)
       {
-        gameData.get(gameId).status = "GAME_START";
+        gameData.get(gameId).status = "GAME_READY";
         WSS.get(gameId).clients.forEach(client => {
           client.send(JSON.stringify({
             type: 'EVENT',
-            eventName: 'GAME_START',
-            data: gameData.get(gameId)
+            eventName: 'GAME_READY',
           }));
         });
       }

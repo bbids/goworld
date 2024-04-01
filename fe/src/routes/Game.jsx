@@ -1,7 +1,9 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { WebSocketContext } from "../contexts/WebSocketContext";
 import { useParams } from "react-router-dom";
-import GameWebSocket from "../webSocket/GameWebSocket";
+import useConnect from "../hooks/useConnect";
+import useGame from "../hooks/useGame";
+import heartbeat from "../webSocket/heartbeat";
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -14,32 +16,36 @@ import GameWebSocket from "../webSocket/GameWebSocket";
  * @returns
  */
 const Game = () => {
-  const { wsState, wsDispatch } = useContext(WebSocketContext);
+  const { wsState } = useContext(WebSocketContext);
   const gameId = useParams().gameId;
+  const { game, gameMutationListener } = useGame();
 
-  useEffect(() => {
-    if (wsState.websocket !== null
-      && wsState.websocket.instance.readyState !== WebSocket.CLOSED)
-      return;
+  const getEventListeners = () => {
+    return [
+      {
+        listenerName: 'heartbeat',
+        eventName: 'GAME_START',
+        callback: (websocket) => {
+          heartbeat(websocket.instance);
+        }
+      }
+    ];
+  };
 
-    const url = `ws://localhost:3000/${gameId}`;
-    const websocket = new GameWebSocket(url);
-    websocket.addCustomEventListener('GAME_START', (wsData) => {
-      wsDispatch({ type: 'SET_GAME', payload: wsData.data});
-    });
-
-    wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
-  }, [wsState, wsDispatch, gameId]);
+  useConnect(gameId, getEventListeners, gameMutationListener);
 
   return (
     <div id='game'>
       <p>We need a board component. A chat perhaps as well ..</p>
       <button onClick={() => {
-        wsState.websocket.instance.send(JSON.stringify({
-          type: 'MESSAGE',
-          message: 'HI!'
-        }));
+        if (wsState.websocket.isOpen())
+          wsState.websocket.instance.send(JSON.stringify({
+            type: 'MESSAGE',
+            message: 'HI!'
+          }));
       }}>sayHi</button>
+
+      <p>We can now see status: {game?.status}</p>
     </div>
   );
 };

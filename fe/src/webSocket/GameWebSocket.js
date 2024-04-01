@@ -8,6 +8,7 @@ import heartbeat from "./heartbeat";
  */
 function GameWebSocket(wsUrl) {
   let _eventListeners = [];
+  let _handleMutation = () => {};
 
   this.instance = new WebSocket(wsUrl);
 
@@ -62,17 +63,46 @@ function GameWebSocket(wsUrl) {
   const _handleEvent = (wsData) => {
     const handler = _handlers[wsData.type] || _handleDefault;
     handler(wsData);
+    if (wsData.mutation)
+      _handleMutation(wsData.mutation);
   };
 
   /**
    * @param {string} eventName custom event
-   * @param {Function} callback
+   * @param {customEventListener} callback
+   *
+   * @callback customEventListener
+   * @param {customEventListener} eventData ws messages may contain data property
    */
   this.addCustomEventListener = (eventName, callback) => {
     _eventListeners.push((wsData) => {
       if (wsData.eventName === eventName)
-        callback(wsData);
+        callback(wsData.data);
     });
+  };
+
+  /**
+   * Websocket messages include mutation property
+   * that define properties that mutate the game state
+   * by adding a new property or changing an existing one.
+   * Use this method with a callback that
+   * listens to those mutations.
+   * @param {mutationListener} callback
+   *
+   * @callback mutationListener
+   * @param {mutationListener} mutationData subset of game state
+   * object that represents mutations
+   */
+  this.addGameMutationListener = (callback) => {
+    if (typeof callback === 'function') {
+      _handleMutation = callback;
+    } else {
+      throw new Error('Callback must be a function');
+    }
+  };
+
+  this.isOpen = () => {
+    return this.instance.readyState === WebSocket.OPEN;
   };
 
   return this;
