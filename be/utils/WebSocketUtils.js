@@ -1,15 +1,8 @@
 const WebSocket = require("ws");
 const logger = require("./logger");
+const handleEvent = require("../events/handleEvents");
 
-/**
- * Stores WebSocketServer as well as player count based on gameId
- */
-const WSS = new Map();
-
-/**
- * Stores game jsons containing game properties
- */
-const gameData = new Map();
+const { WSS, gameData } = require('./cache');
 
 /**
  * Creates a WebSocket for a new game
@@ -23,46 +16,8 @@ const createGameWebSocket = (gameId) => {
     logger.dev(`A new client connected to game ${gameId}`);
 
     ws.on('message', (message) => {
-      const data = JSON.parse(message);
-      
-      switch (data.type)
-      {
-        case 'PONG':
-          ws.isAlive = true;
-          return;
-        case 'MESSAGE':
-          wss.clients.forEach((client) => {
-            if (client !== ws) {
-              client.send(JSON.stringify(data));
-            }
-          })
-          return;
-        case 'EVENT':
-          // todo like in fe: handleEvent() ..
-          if (data.eventName === 'GAME_READY') {
-            gameData.get(gameId).readyCount += 1;
-            if (gameData.get(gameId).readyCount !== 2) break;
-
-            WSS.get(gameId).clients.forEach(client => {
-              // todo: different way to manage spectators
-              gameData.get(gameId).status = "GAME_START";
-              client.send(JSON.stringify({
-                type: 'EVENT',
-                eventName: 'GAME_START',
-                mutation: gameData.get(gameId)
-              }));
-            });
-          }
-        default:
-          return;
-      }
-
-      // For now send message to everyone except sender
-      //wss.clients.forEach((client) => {
-      //  if (client !== ws && client.readyState === WebSocket.OPEN) {
-      //    client.send(message.toString())
-      //  }
-      //});
+      const wsData = JSON.parse(message);
+      handleEvent(wsData, ws, gameId);
     });
 
     ws.on('close', () => {
@@ -100,6 +55,9 @@ const createGameWebSocket = (gameId) => {
   });
 
   WSS.set(gameId, wss);
+
+  const sizeof = require('object-sizeof');
+  logger.dev('COST: WSS', sizeof(WSS));
 };
 
 const cleanup = (gameId) => {
