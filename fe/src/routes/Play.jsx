@@ -15,8 +15,8 @@ const Play = () => {
 
   useEffect(() => {
     /**
-     * (for now) remove game room that was created
-     * by the local user
+     * (for now) hide game room that user
+     * created in the list
      * (later) more options to choose from
      * @param {Object} gamesData
      * @returns

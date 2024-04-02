@@ -20,8 +20,8 @@ const useConnect = (gameId, getEventListeners, gameMutationListener = null) => {
       && wsState.websocket.instance.readyState !== WebSocket.CLOSED)
       return;
 
-    const playerOpen = (websocket) => {
-      // save to state
+    const initWs = (websocket) => {
+      // save websocket state
       wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
 
       // game changes
@@ -34,23 +34,18 @@ const useConnect = (gameId, getEventListeners, gameMutationListener = null) => {
         websocket.addCustomEventListener(listener.eventName, () => { listener.callback(websocket); });
       });
 
-      // player: game ready
+      // players & spectators both send this, but
+      // server listens to players only
       websocket.instance.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'GAME_READY'
       }));
-
-      // cleanup state
-      websocket.instance.addEventListener('close', () => {
-        wsDispatch({ type: 'SET_GAME', payload: null });
-      });
     };
 
-    // the one who created the lobby need not connect
-
+    // the one who created the lobby
     if (wsState.inQueue) {
       wsDispatch({ type: 'SET_INQUEUE', payload: false });
-      playerOpen(wsState.websocket);
+      initWs(wsState.websocket);
       return;
     }
 
@@ -60,9 +55,7 @@ const useConnect = (gameId, getEventListeners, gameMutationListener = null) => {
     // spectators (right now) DO NOT WORK, in future add
     // a custom event listener instead of using open
     websocket.instance.addEventListener('open', () => {
-      // player ->
-      // spectator ->
-      playerOpen(websocket);
+      initWs(websocket);
     });
 
     // since we have no spectators strict mode will cause

@@ -2,7 +2,6 @@ import { createContext, useReducer } from "react";
 
 const websocketState = {
   websocket: null,
-  game: null,
   // in future can use authentication, and save it to user
   inQueue: false
 };
@@ -12,8 +11,6 @@ const websocketReducer = (state, action) => {
   {
   case 'SET_WEBSOCKET':
     return { ...state, websocket: action.payload };
-  case 'SET_GAME':
-    return { ...state, game: action.payload };
   case 'SET_INQUEUE':
     return { ...state, inQueue: action.payload};
   default:

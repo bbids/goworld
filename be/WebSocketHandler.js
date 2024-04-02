@@ -22,16 +22,15 @@ module.exports = function WebSocketHandler(server) {
 
     // handle spectator mode
     if (gameData.count >= 2) {
-    //if (gameData.get(gameId).count >= 2) {
-      // WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
-      //   WSS.get(gameId).emit("connection", ws, request);
-      //   // for now increase
-      //   ++gameData.get(gameId).count;
-      //   ws.send(JSON.stringify({ 
-      //     type: 'SPECTATOR',
-      //     mutation: gameData.get(gameId)
-      //   }));
-      // });
+      wsServer.handleUpgrade(request, socket, head, (ws) => {
+        wsServer.emit("connection", ws, request);
+        // for now increase
+        gameData.count += 1;
+        ws.send(JSON.stringify({ 
+          type: 'SPECTATOR',
+          mutation: gameData
+        }));
+      });
       return;
     }
 

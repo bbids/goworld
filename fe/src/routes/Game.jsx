@@ -21,7 +21,7 @@ const Game = () => {
   const { game, gameMutationListener } = useGame();
 
   const getEventListeners = () => {
-    // condition: at least GAME_START, not before
+    // condition: must occur at GAME_START or later!
     return [
       {
         listenerName: 'heartbeat',

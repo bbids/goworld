@@ -1,24 +1,19 @@
-import { useContext } from "react";
-import { WebSocketContext } from "../contexts/WebSocketContext";
+import { useState } from "react";
 
 const useGame = () => {
-  const { wsState, wsDispatch } = useContext(WebSocketContext);
+  const [game, setGame] = useState({});
 
   const gameMutationListener = (mutation) => {
-
-    // PROBLEM:
-    // not receiving mutation event on
-    // the creator
-    const newGame = wsState.game ? structuredClone(wsState.game) : {};
+    const newGame = structuredClone(game);
 
     for (const key of Object.keys(mutation)) {
       newGame[key] = mutation[key];
     }
 
-    wsDispatch({ type: 'SET_GAME', payload: newGame });
+    setGame(newGame);
   };
 
-  return { game: wsState.game, gameMutationListener };
+  return { game, gameMutationListener };
 };
 
 export default useGame;
