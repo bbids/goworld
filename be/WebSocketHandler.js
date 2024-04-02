@@ -1,4 +1,4 @@
-const { WSS } = require('./utils/cache')
+const { WSS } = require('./utils/cache');
 
 module.exports = function WebSocketHandler(server) {
 
@@ -18,8 +18,10 @@ module.exports = function WebSocketHandler(server) {
       return;
     };
 
+    const { gameData, wsServer, playersUUID } = WSS[gameId];
+
     // handle spectator mode
-    if (WSS[gameId].gameData.count >= 2) {
+    if (gameData.count >= 2) {
     //if (gameData.get(gameId).count >= 2) {
       // WSS.get(gameId).handleUpgrade(request, socket, head, (ws) => {
       //   WSS.get(gameId).emit("connection", ws, request);
@@ -33,18 +35,16 @@ module.exports = function WebSocketHandler(server) {
       return;
     }
 
-    WSS[gameId].server.handleUpgrade(request, socket, head, (ws) => {
-      WSS[gameId].server.emit("connection", ws, request);
-      WSS[gameId].gameData.count += 1;
-
-      // use object for WSS instead of map
-      // consider using an object for both
+    wsServer.handleUpgrade(request, socket, head, (ws) => {
+      wsServer.emit("connection", ws, request);
+      gameData.count += 1;
+      playersUUID.push(ws.uuid);
 
       // have the players, start the game
-      if (WSS[gameId].gameData.count === 2)
+      if (gameData.count === 2)
       {
-        WSS[gameId].gameData.status = "GAME_READY";
-        WSS[gameId].server.clients.forEach(client => {
+        gameData.status = "GAME_READY";
+        wsServer.clients.forEach(client => {
           client.send(JSON.stringify({
             type: 'EVENT',
             eventName: 'GAME_READY',

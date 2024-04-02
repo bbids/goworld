@@ -25,8 +25,14 @@ const createGameWebSocket = (gameId) => {
 
     ws.on('close', () => {
       logger.dev(`Client disconnected from game ${gameId}`);
-      WSS[gameId].gameData.count -= 1;
-      if (WSS[gameId].gameData.count <= 0) cleanup(gameId);
+      const { gameData, playersUUID } = WSS[gameId]
+
+      gameData.count -= 1;
+
+      WSS[gameId].playersUUID = playersUUID.filter(uuid => ws.uuid !== uuid);
+      // todo: if game hasn't started yet, disconnect opponent as well
+
+      if (gameData.count <= 0) cleanup(gameId);
     });
 
     ws.on('error', (err) => {
@@ -51,14 +57,14 @@ const createGameWebSocket = (gameId) => {
   });
 
   WSS[gameId] = {
-    server: wss,
+    wsServer: wss,
     gameData: {
       gameId,
       count: 0,
       status: 'WAITING',
       readyCount: 0,
     },
-    players: []
+    playersUUID: []
   }
 
   // const sizeof = require('object-sizeof');

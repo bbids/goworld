@@ -12,7 +12,9 @@ const handlePong = ({ ws }) => {
 };
 
 const handleMessage = ({ wsData, ws, gameId }) => {
-  WSS[gameId].server.clients.forEach((client) => {
+  const { wsServer } = WSS[gameId];
+
+  wsServer.clients.forEach((client) => {
     // WebSocket.OPEN???
     if (client !== ws && client.readyState === 1) {
       client.send(JSON.stringify({

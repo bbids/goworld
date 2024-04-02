@@ -6,17 +6,22 @@ const handleDefault = () => {
   logger.dev('handleCustomEvents: Unknown wsData type');
 };
 
-const handleGameReady = ({ gameId}) => {
-  WSS[gameId].gameData.readyCount += 1;
-  if (WSS[gameId].gameData.readyCount !== 2) return;
+const handleGameReady = ({ ws, gameId }) => {
+  const { playersUUID, gameData, wsServer} = WSS[gameId]
 
-  // only players get access to GAME_START
-  WSS[gameId].server.clients.forEach(client => {
-    WSS[gameId].gameData.status = "GAME_START";
+  // ignore newly joined spectators
+  if (!playersUUID.includes(ws.uuid))
+    return;
+
+  gameData.readyCount += 1;
+  if (gameData.readyCount !== 2) return;
+
+  wsServer.clients.forEach(client => {
+    gameData.status = "GAME_START";
     client.send(JSON.stringify({
       type: 'EVENT',
       eventName: 'GAME_START',
-      mutation: WSS[gameId].gameData
+      mutation: gameData
     }));
   });
 };
