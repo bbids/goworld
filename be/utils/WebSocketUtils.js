@@ -2,7 +2,9 @@ const WebSocket = require("ws");
 const logger = require("./logger");
 const handleEvent = require("../events/handleEvents");
 
-const { WSS, gameData } = require('./cache');
+const { v4: uuidv4 } = require('uuid');
+
+const { WSS } = require('./cache');
 
 /**
  * Creates a WebSocket for a new game
@@ -13,6 +15,7 @@ const createGameWebSocket = (gameId) => {
   const wss = new WebSocket.WebSocketServer({ noServer: true });
   wss.on('connection', (ws) => {
     ws.isAlive = true;
+    ws.uuid = uuidv4();
     logger.dev(`A new client connected to game ${gameId}`);
 
     ws.on('message', (message) => {
@@ -22,8 +25,8 @@ const createGameWebSocket = (gameId) => {
 
     ws.on('close', () => {
       logger.dev(`Client disconnected from game ${gameId}`);
-      gameData.get(gameId).count -= 1;
-      if (gameData.get(gameId).count <= 0) cleanup(gameId)
+      WSS[gameId].gameData.count -= 1;
+      if (WSS[gameId].gameData.count <= 0) cleanup(gameId);
     });
 
     ws.on('error', (err) => {
@@ -47,25 +50,26 @@ const createGameWebSocket = (gameId) => {
     clearInterval(interval);
   });
 
-  gameData.set(gameId, {
-    gameId,
-    count: 0, /* players + spectators */
-    status: 'WAITING',
-    readyCount: 0, /* players */
-  });
+  WSS[gameId] = {
+    server: wss,
+    gameData: {
+      gameId,
+      count: 0,
+      status: 'WAITING',
+      readyCount: 0,
+    },
+    players: []
+  }
 
-  WSS.set(gameId, wss);
-
-  const sizeof = require('object-sizeof');
-  logger.dev('COST: WSS', sizeof(WSS));
+  // const sizeof = require('object-sizeof');
+  // logger.dev('COST: WSS', sizeof(WSS));
 };
 
 const cleanup = (gameId) => {
   logger.dev('Closing WebSocket');
-  WSS.delete(gameId);
-  gameData.delete(gameId);
+  delete WSS[gameId];
 }
 
 module.exports = {
-  createGameWebSocket, WSS, gameData
+  createGameWebSocket
 }

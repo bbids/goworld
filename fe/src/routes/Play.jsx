@@ -24,15 +24,12 @@ const Play = () => {
     const filterGamesData = (gamesData) => {
       if (!wsState.inQueue) return gamesData;
       const filteredData = {};
-      logger.dev('id', wsState.inQueue.gameId);
-      logger.dev('before', gamesData);
       for (const gameId in gamesData) {
         if (gameId !== wsState.inQueue.gameId) {
           // todo: (maybe) fix gamesData (backend) to not use string gameId as key
           filteredData[gameId] = gamesData[gameId];
         }
       }
-      logger.dev('after', filteredData);
       return filteredData;
     };
 

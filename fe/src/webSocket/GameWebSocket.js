@@ -54,7 +54,7 @@ function GameWebSocket(wsUrl) {
   };
 
   const _handlers = {
-    'EVENT': _handleCustomEvent,
+    'EVENT': _handleCustomEvent, // usually to mean game-related event
     'PING': _handlePing,
     'SPECTATOR': _handleSpectator,
     'MESSAGE': _handleMessage
@@ -99,10 +99,6 @@ function GameWebSocket(wsUrl) {
     } else {
       throw new Error('Callback must be a function');
     }
-  };
-
-  this.isOpen = () => {
-    return this.instance.readyState === WebSocket.OPEN;
   };
 
   return this;

@@ -21,6 +21,7 @@ const Game = () => {
   const { game, gameMutationListener } = useGame();
 
   const getEventListeners = () => {
+    // condition: at least GAME_START, not before
     return [
       {
         listenerName: 'heartbeat',
@@ -28,7 +29,7 @@ const Game = () => {
         callback: (websocket) => {
           heartbeat(websocket.instance);
         }
-      }
+      },
     ];
   };
 
@@ -38,7 +39,7 @@ const Game = () => {
     <div id='game'>
       <p>We need a board component. A chat perhaps as well ..</p>
       <button onClick={() => {
-        if (wsState.websocket.isOpen())
+        if (wsState.websocket.instance.readyState === WebSocket.OPEN)
           wsState.websocket.instance.send(JSON.stringify({
             type: 'MESSAGE',
             message: 'HI!'

@@ -1,4 +1,4 @@
-const { WSS, gameData } = require('../utils/cache')
+const { WSS } = require('../utils/cache')
 const handleCustomEvent = require('./handleCustomEvents');
 const logger = require("../utils/logger");
 
@@ -12,7 +12,7 @@ const handlePong = ({ ws }) => {
 };
 
 const handleMessage = ({ wsData, ws, gameId }) => {
-  WSS.get(gameId).clients.forEach((client) => {
+  WSS[gameId].server.clients.forEach((client) => {
     // WebSocket.OPEN???
     if (client !== ws && client.readyState === 1) {
       client.send(JSON.stringify({
@@ -30,7 +30,6 @@ const handlers = {
 };
 
 const handleEvent = (wsData, ws, gameId) => {
-  logger.dev('handleEvent: ', wsData, wsData.type, wsData.eventName);
   const handler = handlers[wsData.type] || handleDefault;
   handler({ wsData, ws, gameId });
 };

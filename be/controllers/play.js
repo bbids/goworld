@@ -1,9 +1,15 @@
 const playRouter = require('express').Router();
-const logger = require('../utils/logger');
-const { createGameWebSocket, gameData } = require('../utils/WebSocketUtils');
+const { createGameWebSocket } = require('../utils/WebSocketUtils');
+const { WSS } = require('../utils/cache');
 
 playRouter.get("/", (request, response) => {
-  response.status(200).json(Object.fromEntries(gameData));
+  const games = {};
+  
+  Object.values(WSS).forEach(game => {
+    games[game.gameData.gameId] = game.gameData;
+  });
+
+  response.status(200).json(games);
 });
 
 playRouter.get("/create_game", async (request, response) => {
@@ -11,17 +17,17 @@ playRouter.get("/create_game", async (request, response) => {
   const gameId = (Math.floor(Math.random()*(1e8 - 1e6) + 1e6)).toString();
 
   await createGameWebSocket(gameId);
-  response.status(201).json(gameData.get(gameId));   
+  response.status(201).json(WSS[gameId].gameData);   
 });
 
 playRouter.get("/game/:id", async (request, response) => {
   const gameId = request.params.id;
 
-  if (!gameData.has(gameId)) {
+  if (!WSS[gameId]) {
     return response.status(404).end();
   }
 
-  response.status(200).json(gameData.get(gameId));
+  response.status(200).json(WSS[gameId].gameData);
 })
 
 module.exports = playRouter;

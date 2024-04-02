@@ -1,13 +1,14 @@
 /**
- * Stores WebSocketServer with gameId keys
+ * Key: gameId
+ * Properties:
+ *  server: websocket server
+ *  gameData: game state object
+ *  players: [uuid1, uuid2]
+ *  spectatorCount 
+ *  ..?
  */
-const WSS = new Map();
-
-/**
- * Stores game jsons containing game properties
- */
-const gameData = new Map();
+const WSS = Object.create(null);
 
 module.exports = {
-  WSS, gameData
+  WSS
 };

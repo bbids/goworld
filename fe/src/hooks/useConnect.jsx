@@ -1,7 +1,6 @@
 import { useContext, useEffect } from "react";
 import { WebSocketContext } from "../contexts/WebSocketContext";
 import GameWebSocket from "../webSocket/GameWebSocket";
-import logger from "../utils/logger";
 
 /**
  * Connect to WebSocket Server with custom events
@@ -16,8 +15,6 @@ const useConnect = (gameId, getEventListeners, gameMutationListener = null) => {
   const { wsState, wsDispatch } = useContext(WebSocketContext);
 
   useEffect(() => {
-    // todo: what if not in queue and connecting?
-    logger.dev('in queue: ', wsState.inQueue);
     if (!wsState.inQueue
       && wsState.websocket !== null
       && wsState.websocket.instance.readyState !== WebSocket.CLOSED)
@@ -37,7 +34,7 @@ const useConnect = (gameId, getEventListeners, gameMutationListener = null) => {
         websocket.addCustomEventListener(listener.eventName, () => { listener.callback(websocket); });
       });
 
-      // send ready signal
+      // player: game ready
       websocket.instance.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'GAME_READY'
@@ -62,7 +59,11 @@ const useConnect = (gameId, getEventListeners, gameMutationListener = null) => {
 
     // spectators (right now) DO NOT WORK, in future add
     // a custom event listener instead of using open
-    websocket.instance.addEventListener('open', () => { playerOpen(websocket); });
+    websocket.instance.addEventListener('open', () => {
+      // player ->
+      // spectator ->
+      playerOpen(websocket);
+    });
 
     // since we have no spectators strict mode will cause
     // a disconnect, be weary of that
