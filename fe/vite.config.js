@@ -15,6 +15,7 @@ export default defineConfig({
     }
   },
   test: {
-    includeSource: ['src/**/*.js']
+    includeSource: ['src/**/*.js'],
+    environment: 'jsdom'
   }
 });

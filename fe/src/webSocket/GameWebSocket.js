@@ -105,11 +105,3 @@ function GameWebSocket(wsUrl) {
 }
 
 export default GameWebSocket;
-
-if (import.meta.vitest) {
-  const { it, expect } = import.meta.vitest;
-
-  it('test works', () => {
-    expect(1).toBe(1);
-  });
-}

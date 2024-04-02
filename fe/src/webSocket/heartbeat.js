@@ -5,7 +5,7 @@ import logger from "../utils/logger";
  * Potential for pausing the connection, if user leaves
  * instead of directly closing the socket if game doesn't render.
  */
-const heartbeat = (wsInstance) => {
+const heartbeat = (wsInstance, retryTimeout = 5000) => {
   const interval = setInterval(() => {
     if (wsInstance.readyState !== WebSocket.OPEN)
     {
@@ -17,7 +17,7 @@ const heartbeat = (wsInstance) => {
       wsInstance.close();
       clearInterval(interval);
     }
-  }, 5000);
+  }, retryTimeout);
 };
 
 export default heartbeat;
