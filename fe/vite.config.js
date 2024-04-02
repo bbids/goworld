@@ -17,5 +17,8 @@ export default defineConfig({
   test: {
     includeSource: ['src/**/*.js'],
     environment: 'jsdom'
+  },
+  define: {
+    __MUTATION__: true
   }
 });

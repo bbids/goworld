@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { WebSocketContext } from "../contexts/WebSocketContext";
 import { useParams } from "react-router-dom";
 import useConnect from "../hooks/useConnect";
-import useGame from "../hooks/useGame";
+import useGame from "../hooks/useGame/useGame";
 import heartbeat from "../webSocket/heartbeat";
 
 /**

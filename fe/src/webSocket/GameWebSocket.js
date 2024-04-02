@@ -63,8 +63,10 @@ function GameWebSocket(wsUrl) {
   const _handleEvent = (wsData) => {
     const handler = _handlers[wsData.type] || _handleDefault;
     handler(wsData);
-    if (wsData.mutation)
+    if (wsData.mutation) {
       _handleMutation(wsData.mutation);
+      logger.devMutation(wsData.type, wsData);
+    }
   };
 
   /**
