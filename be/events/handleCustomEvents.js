@@ -1,5 +1,5 @@
 const { WSS } = require('../utils/cache');
-const logger = require("../utils/logger");
+const logger = require('../utils/logger');
 
 
 const handleDefault = () => {
@@ -7,7 +7,7 @@ const handleDefault = () => {
 };
 
 const handleGameReady = ({ ws, gameId }) => {
-  const { playersUUID, gameData, wsServer} = WSS[gameId]
+  const { playersUUID, gameData, wsServer} = WSS[gameId];
 
   // ignore newly joined spectators
   if (!playersUUID.includes(ws.uuid))
@@ -17,7 +17,7 @@ const handleGameReady = ({ ws, gameId }) => {
   if (gameData.readyCount !== 2) return;
 
   wsServer.clients.forEach(client => {
-    gameData.status = "GAME_START";
+    gameData.status = 'GAME_START';
     client.send(JSON.stringify({
       type: 'EVENT',
       eventName: 'GAME_START',

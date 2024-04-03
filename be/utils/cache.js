@@ -4,7 +4,7 @@
  *  server: websocket server
  *  gameData: game state object
  *  players: [uuid1, uuid2]
- *  spectatorCount 
+ *  spectatorCount
  *  ..?
  */
 const WSS = Object.create(null);

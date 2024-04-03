@@ -1,6 +1,6 @@
-const { WSS } = require('../utils/cache')
+const { WSS } = require('../utils/cache');
 const handleCustomEvent = require('./handleCustomEvents');
-const logger = require("../utils/logger");
+const logger = require('../utils/logger');
 
 
 const handleDefault = () => {
@@ -22,7 +22,7 @@ const handleMessage = ({ wsData, ws, gameId }) => {
         message: wsData.message
       }));
     }
-  })
+  });
 };
 
 const handlers = {

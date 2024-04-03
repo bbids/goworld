@@ -1,6 +1,6 @@
-const WebSocket = require("ws");
-const logger = require("./logger");
-const handleEvent = require("../events/handleEvents");
+const WebSocket = require('ws');
+const logger = require('./logger');
+const handleEvent = require('../events/handleEvents');
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -8,7 +8,7 @@ const { WSS } = require('./cache');
 
 /**
  * Creates a WebSocket for a new game
- * @param {String} gameId 
+ * @param {String} gameId
  */
 const createGameWebSocket = (gameId) => {
   // noServer options: for manual upgrade handle
@@ -25,7 +25,7 @@ const createGameWebSocket = (gameId) => {
 
     ws.on('close', () => {
       logger.dev(`Client disconnected from game ${gameId}`);
-      const { gameData, playersUUID } = WSS[gameId]
+      const { gameData, playersUUID } = WSS[gameId];
 
       gameData.count -= 1;
 
@@ -38,18 +38,18 @@ const createGameWebSocket = (gameId) => {
     ws.on('error', (err) => {
       cleanup(gameId);
       logger.devError(err);
-    })
+    });
   });
 
   const interval = setInterval(() => {
     wss.clients.forEach((ws) => {
       // for now terminate, otherwise a mechanism for recovery
-      if (ws.isAlive === false) 
+      if (ws.isAlive === false)
         return ws.terminate();
 
       ws.isAlive = false;
       ws.send(JSON.stringify({ type: 'PING' }));
-    })
+    });
   }, 30000);
 
   wss.on('close', () => {
@@ -65,7 +65,7 @@ const createGameWebSocket = (gameId) => {
       readyCount: 0,
     },
     playersUUID: []
-  }
+  };
 
   // const sizeof = require('object-sizeof');
   // logger.dev('COST: WSS', sizeof(WSS));
@@ -74,8 +74,8 @@ const createGameWebSocket = (gameId) => {
 const cleanup = (gameId) => {
   logger.dev('Closing WebSocket');
   delete WSS[gameId];
-}
+};
 
 module.exports = {
   createGameWebSocket
-}
+};

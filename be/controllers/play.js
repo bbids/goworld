@@ -2,9 +2,9 @@ const playRouter = require('express').Router();
 const { createGameWebSocket } = require('../utils/WebSocketUtils');
 const { WSS } = require('../utils/cache');
 
-playRouter.get("/", (request, response) => {
+playRouter.get('/', (request, response) => {
   const games = {};
-  
+
   Object.values(WSS).forEach(game => {
     games[game.gameData.gameId] = game.gameData;
   });
@@ -12,15 +12,15 @@ playRouter.get("/", (request, response) => {
   response.status(200).json(games);
 });
 
-playRouter.get("/create_game", async (request, response) => {
+playRouter.get('/create_game', async (request, response) => {
   // for now use uuid, can make string generator latern
   const gameId = (Math.floor(Math.random()*(1e8 - 1e6) + 1e6)).toString();
 
   await createGameWebSocket(gameId);
-  response.status(201).json(WSS[gameId].gameData);   
+  response.status(201).json(WSS[gameId].gameData);
 });
 
-playRouter.get("/game/:id", async (request, response) => {
+playRouter.get('/game/:id', async (request, response) => {
   const gameId = request.params.id;
 
   if (!WSS[gameId]) {
@@ -28,6 +28,6 @@ playRouter.get("/game/:id", async (request, response) => {
   }
 
   response.status(200).json(WSS[gameId].gameData);
-})
+});
 
 module.exports = playRouter;
