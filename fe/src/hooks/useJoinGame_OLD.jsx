@@ -1,6 +1,6 @@
-import { useContext, useEffect } from "react";
-import { WebSocketContext } from "../contexts/WebSocketContext";
-import GameWebSocket from "../webSocket/GameWebSocket";
+import { useContext, useEffect } from 'react';
+import { WebSocketContext } from '../contexts/WebSocketContext';
+import GameWebSocket from '../webSocket/GameWebSocket';
 
 const useJoinGame = (gameId, getEventListeners) => {
   const { wsState, wsDispatch } = useContext(WebSocketContext);

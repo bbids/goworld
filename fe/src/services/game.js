@@ -31,11 +31,11 @@ const checkGameExists = (gameId) => {
   return fetch(`${baseUrl}/game/${gameId}`)
     .then(response => {
       if (response.status === 404)
-        throw new Error(`Game not found.`);
+        throw new Error('Game not found.');
       else if (response.status === 403)
         throw new Error('Game is full.');
       else if (!response.ok)
-        throw new Error(`Game data not available.`);
+        throw new Error('Game data not available.');
       return response.json();
     })
     .catch(error => {

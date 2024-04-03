@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: { browser: true, es2020: true },
   globals: {
-    '__MUTATION__': 0
+    '__MUTATION__': 'readonly'
   },
   extends: [
     'eslint:recommended',
@@ -26,6 +26,7 @@ module.exports = {
     '@stylistic/js/semi': ['error', 'always'],
     '@stylistic/js/indent': ['error', 2],
     '@stylistic/js/no-trailing-spaces': 'error',
-    'react/prop-types': 0
+    '@stylistic/js/quotes': ['warn', 'single'],
+    'react/prop-types': 'off'
   },
 }

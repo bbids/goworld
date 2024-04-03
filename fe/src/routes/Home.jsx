@@ -1,7 +1,7 @@
-import { Outlet, useLocation } from "react-router-dom";
-import NavBar from "../components/NavBar";
-import { useContext, useEffect } from "react";
-import { WebSocketContext } from "../contexts/WebSocketContext";
+import { Outlet, useLocation } from 'react-router-dom';
+import NavBar from '../components/NavBar';
+import { useContext, useEffect } from 'react';
+import { WebSocketContext } from '../contexts/WebSocketContext';
 
 /**
  * GoWorld home page.

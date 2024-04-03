@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-import { useContext } from "react";
+import { useContext } from 'react';
 
 import gameService from '../services/game.js';
-import logger from "../utils/logger.js";
-import GameWebSocket from "../webSocket/GameWebSocket.js";
-import { WebSocketContext } from "../contexts/WebSocketContext.jsx";
+import logger from '../utils/logger.js';
+import GameWebSocket from '../webSocket/GameWebSocket.js';
+import { WebSocketContext } from '../contexts/WebSocketContext.jsx';
 
 /**
  * Search for a game online
@@ -16,24 +16,23 @@ const SearchGameCard = () => {
   const navigate = useNavigate();
 
   const startGame = async () => {
-    gameService
-      .createGame()
-      .then(gameData => {
-        const websocket = new GameWebSocket(`ws://localhost:3000/${gameData.gameId}`);
+    try {
+      const gameData = await gameService.createGame();
 
-        websocket.instance.addEventListener('open', () => {
-          wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
-          wsDispatch({ type: 'SET_INQUEUE', payload: { gameId: gameData.gameId } });
+      const websocket = new GameWebSocket(`ws://localhost:3000/${gameData.gameId}`);
 
-          // todo: add feature for 'once only' events
-          websocket.addCustomEventListener('GAME_READY', () => {
-            navigate(`/game/${gameData.gameId}`);
-          });
+      websocket.instance.addEventListener('open', () => {
+        wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
+        wsDispatch({ type: 'SET_INQUEUE', payload: { gameId: gameData.gameId } });
+
+        // todo: add feature for 'once only' events
+        websocket.addCustomEventListener('GAME_READY', () => {
+          navigate(`/game/${gameData.gameId}`);
         });
-      })
-      .catch(error => {
-        logger.devError(error);
       });
+    } catch (error) {
+      logger.devError(error);
+    }
   };
 
   return (

@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 const dev = (...params) => {
   if (import.meta.env.MODE === 'development')
     console.log(...params);
@@ -11,17 +9,18 @@ const devError = (...params) => {
 };
 
 
-// todo 
+// todo
 //const mutationEventLog = [];
 
+// eslint-disable-next-line no-unused-vars
 const devMutation = (type, wsData) => {
   if (import.meta.env.MODE === 'development'
     && __MUTATION__) {
-      // console.log(wsData.mutation);
+    // console.log(wsData.mutation);
 
-      console.log('mutation: ', type);
-      // console.log(mutationEventLog);
-    }
+    console.log('mutation: ', type);
+    // console.log(mutationEventLog);
+  }
 };
 
 export default {

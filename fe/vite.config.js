@@ -15,10 +15,10 @@ export default defineConfig({
     }
   },
   test: {
-    includeSource: ['src/**/*.js'],
+    includeSource: ['src/**/*.{js, jsx}'],
     environment: 'jsdom'
   },
   define: {
     __MUTATION__: true
-  }
+  },
 });

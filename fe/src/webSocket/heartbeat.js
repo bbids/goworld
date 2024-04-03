@@ -1,4 +1,4 @@
-import logger from "../utils/logger";
+import logger from '../utils/logger';
 
 /**
  * Client-side check if user is still rendering the game
