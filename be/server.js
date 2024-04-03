@@ -1,7 +1,7 @@
-const express = require("express");
-const http = require("http");
-const playRouter = require("./controllers/play");
-const WebSocketHandler = require("./WebSocketHandler");
+const express = require('express');
+const http = require('http');
+const playRouter = require('./controllers/play');
+const WebSocketHandler = require('./WebSocketHandler');
 
 
 const app = express();

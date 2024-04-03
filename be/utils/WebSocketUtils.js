@@ -1,10 +1,10 @@
 const WebSocket = require('ws');
-const logger = require('./logger');
-const handleEvent = require('../events/handleEvents');
-
 const { v4: uuidv4 } = require('uuid');
-
 const { WSS } = require('./cache');
+const logger = require('./logger');
+
+const handleEvent = require('../events/handleEvents');
+const sendPing = require('../events/sendPing');
 
 /**
  * Creates a WebSocket for a new game
@@ -41,19 +41,10 @@ const createGameWebSocket = (gameId) => {
     });
   });
 
-  const interval = setInterval(() => {
-    wss.clients.forEach((ws) => {
-      // for now terminate, otherwise a mechanism for recovery
-      if (ws.isAlive === false)
-        return ws.terminate();
-
-      ws.isAlive = false;
-      ws.send(JSON.stringify({ type: 'PING' }));
-    });
-  }, 30000);
+  const pingInterval = sendPing(wss);
 
   wss.on('close', () => {
-    clearInterval(interval);
+    clearInterval(pingInterval);
   });
 
   WSS[gameId] = {

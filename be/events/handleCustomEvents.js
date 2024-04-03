@@ -7,17 +7,17 @@ const handleDefault = () => {
 };
 
 const handleGameReady = ({ ws, gameId }) => {
-  const { playersUUID, gameData, wsServer} = WSS[gameId];
+  const { playersUUID, gameData, wsServer } = WSS[gameId];
 
-  // ignore newly joined spectators
   if (!playersUUID.includes(ws.uuid))
     return;
 
+  // count players only
   gameData.readyCount += 1;
   if (gameData.readyCount !== 2) return;
 
+  gameData.status = 'GAME_START';
   wsServer.clients.forEach(client => {
-    gameData.status = 'GAME_START';
     client.send(JSON.stringify({
       type: 'EVENT',
       eventName: 'GAME_START',
