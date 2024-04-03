@@ -8,6 +8,7 @@ import heartbeat from './heartbeat';
  */
 function GameWebSocket(wsUrl) {
   let _eventListeners = [];
+  let _onceEventListeners = new Set();
   let _handleMutation = () => {};
 
   this.instance = new WebSocket(wsUrl);
@@ -36,6 +37,12 @@ function GameWebSocket(wsUrl) {
     });
   };
 
+  const _handleCustomOnceEvent = (wsData) => {
+    _onceEventListeners.forEach((listener) => {
+      listener(wsData);
+    });
+  };
+
   const _handlePing = () => {
     this.instance.send(JSON.stringify({ type: 'PONG' }));
   };
@@ -54,7 +61,10 @@ function GameWebSocket(wsUrl) {
   };
 
   const _handlers = {
-    'EVENT': _handleCustomEvent, // usually to mean game-related event
+    'EVENT': (wsData) => {
+      _handleCustomEvent(wsData);
+      _handleCustomOnceEvent(wsData);
+    },
     'PING': _handlePing,
     'SPECTATOR': _handleSpectator,
     'MESSAGE': _handleMessage
@@ -81,6 +91,25 @@ function GameWebSocket(wsUrl) {
       if (wsData.eventName === eventName)
         callback(wsData.data);
     });
+  };
+
+
+  /**
+   * @param {string} eventName custom event
+   * @param {customOnceEventListener} callback
+   *
+   * @callback customOnceEventListener
+   * @param {customOnceEventListener} eventData ws messages may contain data property
+   */
+  this.addCustomOnceEventListener = (eventName, callback) => {
+    const listener = (wsData) => {
+      if (wsData.eventName === eventName) {
+        callback(wsData.data);
+        _onceEventListeners.delete(listener);
+      }
+    };
+
+    _onceEventListeners.add(listener);
   };
 
   /**
