@@ -15,38 +15,48 @@ const SearchGameCard = () => {
   const { wsState, wsDispatch } = useContext(WebSocketContext);
   const navigate = useNavigate();
 
-  const startGame = async () => {
+  const startSearching = async () => {
     try {
       const gameData = await gameService.createGame();
 
       const websocket = new GameWebSocket(`ws://localhost:3000/${gameData.gameId}`);
 
       websocket.instance.addEventListener('open', () => {
-        wsDispatch({ type: 'SET_WEBSOCKET', payload: websocket });
-        wsDispatch({ type: 'SET_INQUEUE', payload: { gameId: gameData.gameId } });
+        wsDispatch({ type: 'START_QUEUE', payload: {
+          websocket,
+          gameId: gameData.gameId
+        }});
 
-        // todo: add feature for 'once only' events
-        websocket.addCustomEventListener('GAME_READY', () => {
+        websocket.addCustomOnceEventListener('GAME_READY', () => {
+          wsDispatch({ type: 'SET_USERSTATUS', payload: 'LOADING' });
           navigate(`/game/${gameData.gameId}`);
         });
       });
+
+      websocket.instance.addEventListener('close', () => {
+        wsDispatch({ type: 'RESET' });
+      });
+
     } catch (error) {
       logger.devError(error);
     }
   };
 
+  const stopSearching = () => {
+    console.log(wsState);
+    wsState.websocket.instance.close();
+  };
+
+
   return (
     <>
-      {wsState.inQueue ?
+      {wsState.userStatus === 'QUEUE' ?
         <>
           <h1>Attempting to join game</h1>
-          <button onClick={() => {
-            wsState.websocket.instance.close();
-            wsDispatch({ type: 'SET_INQUEUE', payload: false });
-          }}>Stop</button>
+          <button onClick={stopSearching}>Stop</button>
         </>
         :
-        <button onClick={startGame}>Play</button>
+        <button onClick={startSearching}>Play</button>
       }
     </>
   );

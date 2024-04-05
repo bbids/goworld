@@ -94,6 +94,10 @@ function GameWebSocket(wsUrl) {
   };
 
 
+  // rework events to use a MAP instead. consider extract event logic out.
+  this.removeCustomEventListener = null;
+
+
   /**
    * @param {string} eventName custom event
    * @param {customOnceEventListener} callback

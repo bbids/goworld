@@ -15,21 +15,16 @@ const Play = () => {
 
   useEffect(() => {
     /**
-     * (for now) hide game room that user
-     * created in the list
-     * (later) more options to choose from
      * @param {Object} gamesData
      * @returns
      */
     const filterGamesData = (gamesData) => {
-      if (!wsState.inQueue) return gamesData;
-      const filteredData = {};
-      for (const gameId in gamesData) {
-        if (gameId !== wsState.inQueue.gameId) {
-          // todo: (maybe) fix gamesData (backend) to not use string gameId as key
-          filteredData[gameId] = gamesData[gameId];
-        }
-      }
+      if (wsState.userStatus !== 'QUEUE') return gamesData;
+
+      // for now we only remove the game which the user is in QUEUE for
+
+      // eslint-disable-next-line no-unused-vars
+      const { [wsState.gameId]: _, ...filteredData} = gamesData;
       return filteredData;
     };
 
@@ -44,11 +39,11 @@ const Play = () => {
   }, [wsState]);
 
   return (
-    <>
+    <div className='content'>
       <SearchGameCard />
 
       <OpenGamesList gamesData={gamesData} />
-    </>
+    </div>
   );
 };
 

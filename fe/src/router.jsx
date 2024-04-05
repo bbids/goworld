@@ -9,6 +9,23 @@ import Game from './routes/Game';
 import ErrorPage from './routes/ErrorPage';
 import Play from './routes/Play';
 
+
+// App at the tom
+
+// reducer in the App
+
+// Sidebar in app
+
+// Outlet in App
+
+// Context.Provider around Outlet
+
+// wsState and wsDispatch should be safe
+
+// use a cleanup function in the Game useEffect
+
+
+
 const router = createBrowserRouter([
   {
     path: '/',

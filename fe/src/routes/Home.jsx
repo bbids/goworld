@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import NavBar from '../components/NavBar';
 import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '../contexts/WebSocketContext';
+import SideBar from '../components/SideBar';
 
 /**
  * GoWorld home page.
@@ -12,21 +12,25 @@ const Home = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/') {
-      // close the game queue
-      if (wsState.inQueue) {
+    if (location.pathname !== '/play') {
+      if (wsState.userStatus === 'QUEUE') {
         wsState.websocket.instance.close();
-        wsDispatch({ type: 'SET_INQUEUE', payload: false });
       }
     }
-  }, [location, wsState, wsDispatch]);
+
+    // regex or fixed id?
+    if (!location.pathname.match(/^\/game\/[a-zA-Z0-9]+$/)) {
+      if (wsState.userStatus === 'GAME') {
+        wsState.websocket.instance.close();
+      }
+    }
+
+  }, [location.pathname, wsState, wsDispatch]);
 
   return (
     <>
-      <h1>Go World</h1>
-      <NavBar />
-      <hr />
-      <Outlet/>
+      <SideBar />
+      <Outlet />
     </>
   );
 };
