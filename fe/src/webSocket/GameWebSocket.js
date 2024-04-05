@@ -7,7 +7,7 @@ import heartbeat from './heartbeat';
  * @returns {GameWebSocket}
  */
 function GameWebSocket(wsUrl) {
-  let _eventListeners = [];
+  const _eventListeners = {};
   let _onceEventListeners = new Set();
   let _handleMutation = () => {};
 
@@ -32,8 +32,12 @@ function GameWebSocket(wsUrl) {
   };
 
   const _handleCustomEvent = (wsData) => {
-    _eventListeners.forEach(listener => {
-      listener(wsData);
+    Object.keys(_eventListeners).forEach(eventName => {
+      if (wsData.eventName === eventName) {
+        _eventListeners[eventName].forEach(callback => {
+          callback(wsData.data);
+        });
+      }
     });
   };
 
@@ -87,15 +91,28 @@ function GameWebSocket(wsUrl) {
    * @param {customEventListener} eventData ws messages may contain data property
    */
   this.addCustomEventListener = (eventName, callback) => {
-    _eventListeners.push((wsData) => {
-      if (wsData.eventName === eventName)
-        callback(wsData.data);
-    });
+    if (!_eventListeners[eventName])
+      _eventListeners[eventName] = [];
+
+    _eventListeners[eventName].push(callback);
   };
 
 
-  // rework events to use a MAP instead. consider extract event logic out.
-  this.removeCustomEventListener = null;
+  this.removeCustomEventListener = (eventName, callback) => {
+    Object.keys(_eventListeners).forEach(keyEventName => {
+      if (keyEventName === eventName) {
+        _eventListeners[eventName] = _eventListeners[eventName].filter(
+          valueCallback => callback != valueCallback
+        );
+      }
+    });
+  };
+
+  this.removeAllCustomEventListeners = () => {
+    Object.keys(_eventListeners).forEach(key => {
+      delete _eventListeners[key];
+    });
+  };
 
 
   /**
