@@ -34,13 +34,13 @@ test.describe('game websocket suite', () => {
   // test('both clients reply with GAME_READY')
 
   test('joining an open game triggers GAME_START', async ({ page }) => {
-    let connected = false;
+    let received = false;
 
     page.on('websocket', ws => {
       ws.on('framereceived', data => {
         const wsData = JSON.parse(data.payload);
         if (wsData.type === 'EVENT' && wsData.eventName === 'GAME_START') {
-          connected = true;
+          received = true;
         }
       });
     });
@@ -52,20 +52,20 @@ test.describe('game websocket suite', () => {
 
     // think about reasonable timeout
     // https://playwright.dev/docs/test-assertions#expectpoll
-    await expect.poll(() => connected).toBeTruthy();
+    await expect.poll(() => received).toBeTruthy();
   });
 
   test('leaving game page disconnects only leaver', async ({ page }) => {
-    let connected = false;
+    let disconnected = false;
     page.on('websocket', ws => {
       ws.on('close', () => {
-        connected = true;
+        disconnected = true;
       });
     })
-    let connectedA = false;
+    let disconnectedA = false;
     pageA.on('websocket', ws => {
       ws.on('close', () => {
-        connectedA = true;
+        disconnectedA = true;
       });
     })
     await page.goto('/play');
@@ -78,9 +78,9 @@ test.describe('game websocket suite', () => {
 
     await page.goto('/play');
 
-    expect(connected).toBeTruthy();
+    expect(disconnected).toBeTruthy();
     // the other player doesn't disconnect
-    expect(connectedA).toBeFalsy();
+    expect(disconnectedA).toBeFalsy();
   });
 
 
