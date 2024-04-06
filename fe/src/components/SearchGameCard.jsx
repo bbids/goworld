@@ -33,17 +33,12 @@ const SearchGameCard = () => {
         });
       });
 
-      websocket.instance.addEventListener('close', () => {
-        wsDispatch({ type: 'RESET' });
-      });
-
     } catch (error) {
       logger.devError(error);
     }
   };
 
   const stopSearching = () => {
-    console.log(wsState);
     wsState.websocket.instance.close();
   };
 

@@ -12,6 +12,11 @@ document.addEventListener(
     websocket.instance.addEventListener('open', () => {
       dispatchConnection(websocket);
     });
+
+    //websocket.instance.addEventListener('close', () => {
+    //  if person leaves willingly home handles closure
+    //  if they get disconnected we should handle it here
+    //});
   }
 );
 

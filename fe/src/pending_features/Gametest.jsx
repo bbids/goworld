@@ -64,7 +64,7 @@ describe('Game Component', async () => {
 
     const sayHiButton = getByText('sayHi');
     expect(sayHiButton).toBeInTheDocument();
-  }); */
+  });
 });
 
 */

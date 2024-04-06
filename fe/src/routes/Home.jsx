@@ -15,13 +15,16 @@ const Home = () => {
     if (location.pathname !== '/play') {
       if (wsState.userStatus === 'QUEUE') {
         wsState.websocket.instance.close();
+        wsDispatch({ type: 'RESET' });
       }
     }
 
-    // regex or fixed id?
+    // we match regex not fixed id, since it is impossible for
+    // a user to go from game to another game without refreshing
     if (!location.pathname.match(/^\/game\/[a-zA-Z0-9]+$/)) {
       if (wsState.userStatus === 'GAME') {
         wsState.websocket.instance.close();
+        wsDispatch({ type: 'RESET' });
       }
     }
 
