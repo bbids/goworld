@@ -3,6 +3,7 @@ import { WebSocketContext } from '../contexts/WebSocketContext';
 import useGame from '../hooks/useGame/useGame';
 import { useParams } from 'react-router-dom';
 import { dispatchConnection } from '../webSocket/gameWebSocketUtils';
+import Board from '../components/Board';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -21,7 +22,7 @@ const Game = () => {
 
   // initialize after connection
   useEffect(() => {
-    const callback = (event) => {
+    const initialise = (event) => {
       const websocket = event.detail.websocket;
       websocket.addGameMutationListener(gameMutationListener);
       wsDispatch({ type: 'START_GAME', payload: websocket });
@@ -31,10 +32,10 @@ const Game = () => {
       }));
     };
 
-    document.addEventListener('wsConnection', callback);
+    document.addEventListener('wsConnection', initialise);
 
     return () => {
-      document.removeEventListener('wsConnection', callback);
+      document.removeEventListener('wsConnection', initialise);
     };
   }, [wsState, wsDispatch, gameMutationListener]);
 
@@ -63,7 +64,7 @@ const Game = () => {
   return (
     <div id='game' className='content'>
 
-      { /* <Board /> */}
+      <Board />
 
       <p>We need a chat as well ..</p>
       <button onClick={() => {
