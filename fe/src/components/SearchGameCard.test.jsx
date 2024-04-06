@@ -67,6 +67,38 @@ describe('SearchGameCard', () => {
     expect(stopButton).toBeInTheDocument();
   });
 
+  it('show Play and hides text if Stop button is clicked', () => {
+    const { getByText, rerender, queryByText } = render(
+      <WebSocketContext.Provider value={{
+        ...mockWebSocketContext,
+        wsState: {
+          ...mockWebSocketContext.wsState,
+          userStatus: 'QUEUE'
+        }
+      }}>
+        <SearchGameCard />
+      </WebSocketContext.Provider>
+    );
+    const stopButton = getByText('Stop');
+    expect(stopButton).toBeInTheDocument();
+    fireEvent.click(stopButton);
+    rerender(
+      <WebSocketContext.Provider value={{
+        ...mockWebSocketContext,
+        wsState: {
+          ...mockWebSocketContext.wsState,
+          userStatus: '' // assume stopButton resets userStatus
+        }
+      }}>
+        <SearchGameCard />
+      </WebSocketContext.Provider>
+    );
+    const playButton = getByText('Play');
+    expect(playButton).toBeInTheDocument();
+    const hiddenText = queryByText('Attempting to join game');
+    expect(hiddenText).toBeNull();
+  });
+
   it('calls startSearching when play button is clicked', async () => {
     const { getByText } = render(
       <WebSocketContext.Provider value={mockWebSocketContext}>

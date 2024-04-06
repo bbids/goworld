@@ -40,6 +40,7 @@ const SearchGameCard = () => {
 
   const stopSearching = () => {
     wsState.websocket.instance.close();
+    wsDispatch({ type: 'RESET' });
   };
 
 
