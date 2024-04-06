@@ -1,5 +1,5 @@
 import logger from '../utils/logger';
-import heartbeat from './heartbeat';
+import heartbeat from '../pending_features/heartbeat_pending';
 
 /**
  * Wrapper for WebSocket with custom events.

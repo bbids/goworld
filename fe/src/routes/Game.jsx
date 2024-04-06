@@ -1,11 +1,8 @@
 import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '../contexts/WebSocketContext';
-import { useParams } from 'react-router-dom';
 import useGame from '../hooks/useGame/useGame';
-import { getEventListeners } from '../webSocket/customEvents';
-import GameWebSocket from '../webSocket/GameWebSocket';
-import logger from '../utils/logger';
-import Board from '../components/Board';
+import { useParams } from 'react-router-dom';
+import { dispatchConnection } from '../webSocket/gameWebSocketUtils';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -21,78 +18,54 @@ const Game = () => {
   const { wsState, wsDispatch } = useContext(WebSocketContext);
   const { game, gameMutationListener } = useGame();
   const gameId = useParams().gameId;
-  const url = `ws://localhost:3000/${gameId}`; // baseUrl using vite env
 
+  // initialize after connection
   useEffect(() => {
-    if (wsState.userStatus === 'GAME')
-      return;
-
-    const sendGameReady = (websocket) => {
-      // players & spectators both send this, but
-      // server listens to players only
+    const callback = (event) => {
+      const websocket = event.detail.websocket;
+      websocket.addGameMutationListener(gameMutationListener);
+      wsDispatch({ type: 'START_GAME', payload: websocket });
       websocket.instance.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'GAME_READY'
       }));
     };
 
-    const joinGameWebSocket = () => {
-      // the one who created the lobby is already (presumably) connected
-      if (wsState.websocket?.instance.readyState === WebSocket.OPEN) {
-        wsDispatch({ type: 'START_GAME', payload: wsState.websocket });
-        sendGameReady(wsState.websocket);
-        return;
-      }
+    document.addEventListener('wsConnection', callback);
 
-      const websocket = new GameWebSocket(url);
-      wsDispatch({ type: 'START_GAME', payload: websocket });
-
-      websocket.instance.addEventListener('open', () => {
-        sendGameReady(websocket);
-      });
-
-      websocket.instance.addEventListener('close', () => {
-        wsDispatch({ type: 'RESET' });
-      });
-
-      websocket.instance.addEventListener('error', (err) => {
-        logger.devError('WebSocket error', err);
-        websocket.instance.close();
-      });
+    return () => {
+      document.removeEventListener('wsConnection', callback);
     };
+  }, [wsState, wsDispatch, gameMutationListener]);
 
-    joinGameWebSocket();
-  }, [wsDispatch, wsState, url]);
 
+  // dispatch trigger event : starting point
   useEffect(() => {
-    if (wsState.websocket === null)
+    if (wsState.userStatus === 'GAME'
+      || wsState.userStatus === 'CONNECTING')
       return;
 
-    const subscribeToCustomEvents = () => {
-      const eventListeners = getEventListeners();
-      eventListeners.forEach(listener => {
-        wsState.websocket.addCustomEventListener(
-          listener.eventName,
-          () => { listener.callback(wsState.websocket); });
-      });
-    };
-
-    subscribeToCustomEvents();
-  }, [wsState.websocket]);
-
-  useEffect(() => {
-    if (wsState.websocket === null)
+    // The one in QUEUE is already connected
+    if (wsState.websocket?.instance.readyState === WebSocket.OPEN) {
+      dispatchConnection(wsState.websocket);
       return;
+    }
 
-    wsState.websocket.addGameMutationListener(gameMutationListener);
-  }, [wsState.websocket, gameMutationListener]);
+    wsDispatch({ type: 'SET_USERSTATUS', payload: 'CONNECTING' });
+
+    const requestConnection = new CustomEvent('requestConnection', {
+      detail: { gameId }
+    });
+    document.dispatchEvent(requestConnection);
+  }, [wsState, wsDispatch, gameId]);
+
 
   return (
     <div id='game' className='content'>
 
-      <Board />
+      { /* <Board /> */}
 
-      <p>We need a board component. A chat perhaps as well ..</p>
+      <p>We need a chat as well ..</p>
       <button onClick={() => {
         if (wsState.websocket?.instance.readyState === WebSocket.OPEN)
           wsState.websocket.instance.send(JSON.stringify({
