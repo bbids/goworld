@@ -29,6 +29,26 @@ describe('useGame', () => {
     expect(result.current.game).toEqual({ love: true, newProperty: { test: 'true' } });
   });
 
+  it('state setter enques state changes correctly', () => {
+    const { result, rerender} = renderHook(() => useGame());
+
+    const mutate1 = {
+      love: true
+    };
+
+    result.current.gameMutationListener(mutate1);
+
+    const mutate2 = {
+      newProperty: {
+        test: 'true',
+      }
+    };
+    result.current.gameMutationListener(mutate2);
+    rerender();
+
+    expect(result.current.game).toEqual({ love: true, newProperty: { test: 'true' } });
+  });
+
   it('exits cleanly if mutation is null', () => {
     const { result, rerender} = renderHook(() => useGame());
 

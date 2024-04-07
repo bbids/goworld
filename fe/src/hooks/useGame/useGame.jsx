@@ -10,8 +10,7 @@ const useGame = () => {
       return;
     }
 
-    const newGame = { ...game, ...mutation};
-    setGame(newGame);
+    setGame(pgame => ({ ...pgame, ...mutation }));
   };
 
   return { game, gameMutationListener };
