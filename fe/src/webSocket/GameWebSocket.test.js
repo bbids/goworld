@@ -2,7 +2,6 @@ import { it, expect, describe, beforeAll, afterAll } from 'vitest';
 import GameWebSocket from './GameWebSocket';
 import { WebSocketServer } from 'ws';
 
-
 describe('GameWebSocket test suite', () => {
 
   describe('customOnceEventListener suite', () => {
@@ -29,7 +28,7 @@ describe('GameWebSocket test suite', () => {
 
     it('is triggered once', async () => {
       const wsUrl = 'ws://localhost:8080';
-      const websocket = GameWebSocket(wsUrl);
+      const websocket = new GameWebSocket(wsUrl);
 
       const promise = new Promise((resolve) => {
         websocket.addCustomOnceEventListener('testPong', () => {

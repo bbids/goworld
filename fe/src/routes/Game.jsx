@@ -1,8 +1,7 @@
-import { useContext, useEffect } from 'react';
-import { WebSocketContext } from '../contexts/WebSocketContext';
-import useGame from '../hooks/useGame/useGame';
+import { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
-import { dispatchConnection } from '../webSocket/gameWebSocketUtils';
+import { connection } from '../webSocket/connection';
 import Board from '../components/Board';
 
 /**
@@ -16,17 +15,29 @@ import Board from '../components/Board';
  * @returns
  */
 const Game = () => {
-  const { wsState, wsDispatch } = useContext(WebSocketContext);
-  const { game, gameMutationListener } = useGame();
+  const { user, setUser } = useContext(UserContext);
+  const [game, setGame] = useState({});
   const gameId = useParams().gameId;
+
+  useEffect(() => {
+    const callback = (event) => {
+      const changes = event.detail.mutation;
+      setGame(pgame => ({...pgame, ...changes }));
+    };
+
+    document.addEventListener('mutation', callback);
+
+    return () => {
+      document.removeEventListener('mutation', callback);
+    };
+  }, []);
 
   // initialize after connection
   useEffect(() => {
-    const initialise = (event) => {
-      const websocket = event.detail.websocket;
-      websocket.addGameMutationListener(gameMutationListener);
-      wsDispatch({ type: 'START_GAME', payload: websocket });
-      websocket.instance.send(JSON.stringify({
+    const initialise = () => {
+      document.removeEventListener('wsConnection', initialise);
+      setUser({ type: 'SET_USERSTATUS', payload: 'GAME' });
+      connection.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'GAME_READY'
       }));
@@ -37,28 +48,30 @@ const Game = () => {
     return () => {
       document.removeEventListener('wsConnection', initialise);
     };
-  }, [wsState, wsDispatch, gameMutationListener]);
+  }, [setUser]);
 
 
   // dispatch trigger event : starting point
   useEffect(() => {
-    if (wsState.userStatus === 'GAME'
-      || wsState.userStatus === 'CONNECTING')
+    if (user.userStatus === 'GAME'
+      || user.userStatus === 'CONNECTING')
       return;
 
-    // The one in QUEUE is already connected
-    if (wsState.websocket?.instance.readyState === WebSocket.OPEN) {
-      dispatchConnection(wsState.websocket);
-      return;
+    setUser({ type: 'SET_USERSTATUS', payload: 'CONNECTING' });
+
+    if (!connection.isOpen()) {
+      connection.establish(gameId);
     }
+    connection.dispatchEvent();
+  }, [user, setUser, gameId]);
 
-    wsDispatch({ type: 'SET_USERSTATUS', payload: 'CONNECTING' });
-
-    const requestConnection = new CustomEvent('requestConnection', {
-      detail: { gameId }
-    });
-    document.dispatchEvent(requestConnection);
-  }, [wsState, wsDispatch, gameId]);
+  const sayHi = () => {
+    if (connection.isOpen())
+      connection.send(JSON.stringify({
+        type: 'MESSAGE',
+        message: 'HI!'
+      }));
+  };
 
 
   return (
@@ -67,13 +80,7 @@ const Game = () => {
       <Board />
 
       <p>We need a chat as well ..</p>
-      <button onClick={() => {
-        if (wsState.websocket?.instance.readyState === WebSocket.OPEN)
-          wsState.websocket.instance.send(JSON.stringify({
-            type: 'MESSAGE',
-            message: 'HI!'
-          }));
-      }}>sayHi</button>
+      <button onClick={sayHi}>sayHi</button>
 
       <p>We can now see status: {game?.status}</p>
     </div>

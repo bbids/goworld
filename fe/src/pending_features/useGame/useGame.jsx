@@ -10,7 +10,12 @@ const useGame = () => {
       return;
     }
 
-    setGame(pgame => ({ ...pgame, ...mutation }));
+    console.log(mutation);
+
+    setGame(pgame => {
+      logger.dev('changed game', pgame, mutation);
+      return ({ ...pgame, ...mutation });
+    });
   };
 
   return { game, gameMutationListener };

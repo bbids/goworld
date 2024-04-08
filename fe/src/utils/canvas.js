@@ -1,3 +1,4 @@
+
 /**
  * Given a click event, return row
  * and col of a new stone on the board
@@ -5,15 +6,15 @@
  * @param {*} canvasRef
  * @returns
  */
-const getRowAndCol = (event, canvasRef) => {
+const getRowAndCol = (event, canvasRef, cellSize = 32) => {
   const canvas = canvasRef.current;
 
   const rect = canvas.getBoundingClientRect();
   const click_X = event.clientX - rect.left;
   const click_Y = event.clientY - rect.top;
 
-  const col = Math.floor(click_X / 19);
-  const row = Math.floor(click_Y / 19);
+  const col = Math.floor((click_X + cellSize / 2) / cellSize);
+  const row = Math.floor((click_Y + cellSize / 2) / cellSize);
 
   return { row, col };
 };
@@ -42,7 +43,7 @@ const drawBackgroundDefault = (canvasRef) => {
   const ctx = canvas.getContext('2d');
 
   ctx.fillStyle = 'rgb(139, 69, 19)';
-  ctx.fillRect(0, 0, 304, 304);
+  ctx.fillRect(0, 0, 608, 608);
 };
 
 

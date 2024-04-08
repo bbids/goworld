@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor, cleanup } from '@testing-library/react';
 
-import { WebSocketContext } from '../contexts/WebSocketContext';
+import { UserContext } from '../contexts/UserContext';
 import SearchGameCard from './SearchGameCard';
 import * as GameWebSocket from '../webSocket/GameWebSocket';
 import gameService from '../services/game';
@@ -22,16 +22,11 @@ vi.mock('../websocket/GameWebSocket', () => {
 
 
 // Mocking WebSocketContext
-const mockWebSocketContext = {
-  wsState: {
+const mockUserContext = {
+  user: {
     userStatus: null,
-    websocket: {
-      instance: {
-        close: vi.fn()
-      }
-    }
   },
-  wsDispatch: vi.fn()
+  setUser: vi.fn()
 };
 
 describe('SearchGameCard', () => {
@@ -43,9 +38,9 @@ describe('SearchGameCard', () => {
 
   it('renders Play button when user is not in QUEUE', () => {
     const { getByText } = render(
-      <WebSocketContext.Provider value={mockWebSocketContext}>
+      <UserContext.Provider value={mockUserContext}>
         <SearchGameCard />
-      </WebSocketContext.Provider>
+      </UserContext.Provider>
     );
     const playButton = getByText('Play');
     expect(playButton).toBeInTheDocument();
@@ -53,15 +48,15 @@ describe('SearchGameCard', () => {
 
   it('renders stop button if user is in QUEUE', () => {
     const { getByText } = render(
-      <WebSocketContext.Provider value={{
-        ...mockWebSocketContext,
-        wsState: {
-          ...mockWebSocketContext.wsState,
+      <UserContext.Provider value={{
+        ...mockUserContext,
+        user: {
+          ...mockUserContext.user,
           userStatus: 'QUEUE'
         }
       }}>
         <SearchGameCard />
-      </WebSocketContext.Provider>
+      </UserContext.Provider>
     );
     const stopButton = getByText('Stop');
     expect(stopButton).toBeInTheDocument();
@@ -69,29 +64,29 @@ describe('SearchGameCard', () => {
 
   it('show Play and hides text if Stop button is clicked', () => {
     const { getByText, rerender, queryByText } = render(
-      <WebSocketContext.Provider value={{
-        ...mockWebSocketContext,
-        wsState: {
-          ...mockWebSocketContext.wsState,
+      <UserContext.Provider value={{
+        ...mockUserContext,
+        user: {
+          ...mockUserContext.user,
           userStatus: 'QUEUE'
         }
       }}>
         <SearchGameCard />
-      </WebSocketContext.Provider>
+      </UserContext.Provider>
     );
     const stopButton = getByText('Stop');
     expect(stopButton).toBeInTheDocument();
     fireEvent.click(stopButton);
     rerender(
-      <WebSocketContext.Provider value={{
-        ...mockWebSocketContext,
-        wsState: {
-          ...mockWebSocketContext.wsState,
-          userStatus: '' // assume stopButton resets userStatus
+      <UserContext.Provider value={{
+        ...mockUserContext,
+        user: {
+          ...mockUserContext.user,
+          userStatus: null
         }
       }}>
         <SearchGameCard />
-      </WebSocketContext.Provider>
+      </UserContext.Provider>
     );
     const playButton = getByText('Play');
     expect(playButton).toBeInTheDocument();
@@ -101,9 +96,9 @@ describe('SearchGameCard', () => {
 
   it('calls startSearching when play button is clicked', async () => {
     const { getByText } = render(
-      <WebSocketContext.Provider value={mockWebSocketContext}>
+      <UserContext.Provider value={mockUserContext}>
         <SearchGameCard />
-      </WebSocketContext.Provider>
+      </UserContext.Provider>
     );
     const playButton = getByText('Play');
     const spy0 = vi.spyOn(gameService, 'createGame').mockImplementation(() => {

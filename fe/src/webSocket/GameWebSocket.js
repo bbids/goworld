@@ -1,5 +1,5 @@
 import logger from '../utils/logger';
-import heartbeat from '../pending_features/heartbeat_pending';
+import heartbeat from './heartbeat';
 
 /**
  * Wrapper for WebSocket with custom events.
@@ -8,8 +8,8 @@ import heartbeat from '../pending_features/heartbeat_pending';
  */
 function GameWebSocket(wsUrl) {
   const _eventListeners = {};
-  let _onceEventListeners = new Set();
-  let _handleMutation = () => {};
+  const _onceEventListeners = new Set();
+  let _handleMutation = () => { };
 
   this.instance = new WebSocket(wsUrl);
 
@@ -35,7 +35,7 @@ function GameWebSocket(wsUrl) {
     Object.keys(_eventListeners).forEach(eventName => {
       if (wsData.eventName === eventName) {
         _eventListeners[eventName].forEach(callback => {
-          callback(wsData.data);
+          callback(wsData);
         });
       }
     });
@@ -84,13 +84,13 @@ function GameWebSocket(wsUrl) {
   };
 
   /**
-   * @param {string} eventName custom event
-   * @param {customEventListener} callback
-   *
-   * @callback customEventListener
-   * @param {customEventListener} eventData ws messages may contain data property
-   */
-  this.addCustomEventListener = (eventName, callback) => {
+ * @param {string} eventName custom event
+ * @param {customEventListener} callback
+ *
+ * @callback customEventListener
+ * @param {customEventListener} eventData ws messages may contain data property
+ */
+  this.addCustomEventListener = function (eventName, callback) {
     if (!_eventListeners[eventName])
       _eventListeners[eventName] = [];
 
@@ -98,7 +98,7 @@ function GameWebSocket(wsUrl) {
   };
 
 
-  this.removeCustomEventListener = (eventName, callback) => {
+  this.removeCustomEventListener = function (eventName, callback) {
     Object.keys(_eventListeners).forEach(keyEventName => {
       if (keyEventName === eventName) {
         _eventListeners[eventName] = _eventListeners[eventName].filter(
@@ -108,7 +108,7 @@ function GameWebSocket(wsUrl) {
     });
   };
 
-  this.removeAllCustomEventListeners = () => {
+  this.removeAllCustomEventListeners = function () {
     Object.keys(_eventListeners).forEach(key => {
       delete _eventListeners[key];
     });
@@ -122,7 +122,7 @@ function GameWebSocket(wsUrl) {
    * @callback customOnceEventListener
    * @param {customOnceEventListener} eventData ws messages may contain data property
    */
-  this.addCustomOnceEventListener = (eventName, callback) => {
+  this.addCustomOnceEventListener = function (eventName, callback) {
     const listener = (wsData) => {
       if (wsData.eventName === eventName) {
         callback(wsData.data);
@@ -145,7 +145,7 @@ function GameWebSocket(wsUrl) {
    * @param {mutationListener} mutationData subset of game state
    * object that represents mutations
    */
-  this.addGameMutationListener = (callback) => {
+  this.addGameMutationListener = function (callback) {
     if (typeof callback === 'function') {
       _handleMutation = callback;
     } else {
@@ -153,7 +153,16 @@ function GameWebSocket(wsUrl) {
     }
   };
 
+  this.send = function (msg) {
+    this.instance.send(msg);
+  };
+
+  this.isOpen = function () {
+    return this.instance.readyState === WebSocket.OPEN;
+  };
+
   return this;
+
 }
 
 export default GameWebSocket;

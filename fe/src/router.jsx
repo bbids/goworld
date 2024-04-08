@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { gameValidLoader } from './utils/loaders';
 
-import { WebSocketContextProvider } from './contexts/WebSocketContext';
+import { UserContextProvider } from './contexts/UserContext';
 
 import Home from './routes/Home';
 import Game from './routes/Game';
@@ -31,9 +31,9 @@ const router = createBrowserRouter([
     path: '/',
     element:
       <>
-        <WebSocketContextProvider>
+        <UserContextProvider>
           <Home />
-        </WebSocketContextProvider>
+        </UserContextProvider>
       </>,
     errorElement: <ErrorPage />,
     children: [

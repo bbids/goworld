@@ -4,31 +4,30 @@ import { useContext } from 'react';
 
 import gameService from '../services/game.js';
 import logger from '../utils/logger.js';
-import GameWebSocket from '../webSocket/GameWebSocket.js';
-import { WebSocketContext } from '../contexts/WebSocketContext.jsx';
+import { UserContext } from '../contexts/UserContext.jsx';
+import { connection } from '../webSocket/connection.js';
 
 /**
  * Search for a game online
  * @returns
  */
 const SearchGameCard = () => {
-  const { wsState, wsDispatch } = useContext(WebSocketContext);
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const startSearching = async () => {
     try {
       const gameData = await gameService.createGame();
 
-      const websocket = new GameWebSocket(`ws://localhost:3000/${gameData.gameId}`);
+      connection.establish(gameData.gameId);
 
-      websocket.instance.addEventListener('open', () => {
-        wsDispatch({ type: 'START_QUEUE', payload: {
-          websocket,
+      connection.websocket.instance.addEventListener('open', () => {
+        setUser({ type: 'START_QUEUE', payload: {
           gameId: gameData.gameId
         }});
 
-        websocket.addCustomOnceEventListener('GAME_READY', () => {
-          wsDispatch({ type: 'SET_USERSTATUS', payload: 'LOADING' });
+        connection.addCustomOnceEventListener('GAME_READY', () => {
+          setUser({ type: 'SET_USERSTATUS', payload: 'LOADING' });
           navigate(`/game/${gameData.gameId}`);
         });
       });
@@ -39,14 +38,14 @@ const SearchGameCard = () => {
   };
 
   const stopSearching = () => {
-    wsState.websocket.instance.close();
-    wsDispatch({ type: 'RESET' });
+    connection.reset();
+    setUser({ type: 'RESET' });
   };
 
 
   return (
     <>
-      {wsState.userStatus === 'QUEUE' ?
+      {user.userStatus === 'QUEUE' ?
         <>
           <h1>Attempting to join game</h1>
           <button onClick={stopSearching}>Stop</button>

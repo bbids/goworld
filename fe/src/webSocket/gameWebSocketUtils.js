@@ -1,26 +1,35 @@
 import logger from '../utils/logger';
-import GameWebSocket from './GameWebSocket';
+import { connection } from './connection';
+import { subscribeToCustomEvents } from './customEvents';
 
-document.addEventListener(
-  'requestConnection',
-  (event) => {
-    logger.dev('requestConnection', event);
-    const gameId = event.detail.gameId;
-    const wsUrl = `ws://localhost:3000/${gameId}`; // baseUrl using vite env
-    const websocket = new GameWebSocket(wsUrl);
+const subscribeToGameMutation = () => {
+  const listener = (mutation) => {
+    if (!mutation || typeof mutation !== 'object') {
+      logger.devError('Invalid mutation: mutation must be an object');
+      return;
+    }
 
-    websocket.instance.addEventListener('open', () => {
-      dispatchConnection(websocket);
+    logger.dev('mutation: ', mutation);
+
+    const mutationEvent = new CustomEvent('mutation', {
+      detail: {
+        mutation
+      }
     });
 
-    //websocket.instance.addEventListener('close', () => {
-    //  if person leaves willingly home handles closure
-    //  if they get disconnected we should handle it here
-    //});
-  }
-);
+    document.dispatchEvent(mutationEvent);
+  };
+  connection.addGameMutationListener(listener);
+};
+
 
 const dispatchConnection = (websocket) => {
+
+  // preliminary stuff that must be done before hand
+  // that is not handled by react components
+  subscribeToCustomEvents(websocket);
+  subscribeToGameMutation();
+
   const wsConnection = new CustomEvent('wsConnection', {
     detail: {
       websocket
@@ -30,5 +39,5 @@ const dispatchConnection = (websocket) => {
 };
 
 export {
-  dispatchConnection
+  dispatchConnection,
 };

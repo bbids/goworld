@@ -1,9 +1,10 @@
 import { useContext, useEffect, useRef } from 'react';
 
-// import bstone from '../assets/bstone.png';
+import bstone from '../assets/bstone.png';
 import wstone from '../assets/wstone.png';
-import { WebSocketContext } from '../contexts/WebSocketContext';
+import { UserContext } from '../contexts/UserContext';
 import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
+import { connection } from '../webSocket/connection';
 
 /*
   0) Board is unfrozen (out turn)
@@ -30,29 +31,21 @@ import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
 */
 
 const Board = () => {
-  const { wsState } = useContext(WebSocketContext);
+  const { user } = useContext(UserContext);
   const canvasRef = useRef(null);
   const cellSize = 32;
 
-  useEffect(() => {
-    // something to do with checking if we are connected?
-  }, [wsState.websocket]);
-
   // Move request
   useEffect(() => {
-    if (wsState.websocket?.instance.readyState !== WebSocket.OPEN)
+    if (user.userStatus !== 'GAME')
       return;
 
     const canvas = canvasRef.current;
 
-    const callback = (event) => {
-      /*
-      IF NOT YOUR TURN RETURN (: or maybe let the server handle it?
-      */
-
+    const moveRequest = (event) => {
       const { row, col } = getRowAndCol(event, canvasRef);
 
-      wsState.websocket.instance.send(JSON.stringify({
+      connection.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'MOVE_REQUEST',
         row,
@@ -60,41 +53,50 @@ const Board = () => {
       }));
     };
 
-    canvas.addEventListener('click', callback);
+    canvas.addEventListener('click', moveRequest);
 
     return () => {
-      canvas.removeEventListener('click', callback);
+      canvas.removeEventListener('click', moveRequest);
     };
-  }, [wsState]);
+  }, [user]);
 
 
   // Draw stone
   useEffect(() => {
-    const drawStone = ({ row, col }) => {
+    const drawStone = (event) => {
+      const { row, col, color } = event.detail;
       const ctx = canvasRef.current.getContext('2d');
 
       const x = col * cellSize;
       const y = row * cellSize;
 
       const stoneImg = new Image();
-      stoneImg.src = wstone;
+      stoneImg.src = color === 'BLACK' ? bstone : wstone;
       stoneImg.addEventListener('load', () => {
         ctx.drawImage(stoneImg, x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
       });
     };
 
-    // wsState.websocket.addCustomEventListener('DRAW_STONE', callback);
     document.addEventListener('DRAW_STONE', drawStone);
 
     return () => {
-      // wsState.websocket?.removeCustomEventListener('DRAW_STONE', callback);
       document.removeEventListener('DRAW_STONE', drawStone);
     };
   }, []);
 
   // Remove stone
   useEffect(() => {
-    const callback = () => { };
+    const callback = () => {
+      /*
+      const { row, col } = event.detail;
+      const ctx = canvasRef.current.getContext('2d');
+
+      const x = col * cellSize;
+      const y = row * cellSize;
+
+      ctx.clear(x - cellSize / 2, y - cellSize / 2, cellSize, cellSize)
+      */
+    };
 
     document.addEventListener('REMOVE_STONE', callback);
 
@@ -113,7 +115,7 @@ const Board = () => {
 
   return (
     <>
-      <canvas id='board' ref={canvasRef} width={608} height={608} />
+      <canvas id='board' data-testid='board' ref={canvasRef} width={608} height={608} />
     </>
   );
 };
