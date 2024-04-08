@@ -17,6 +17,10 @@ const handleGameReady = ({ ws, gameId }) => {
   if (gameData.readyCount !== 2) return;
 
   gameData.status = 'GAME_START';
+  gameData.playerTurn = 0;
+  gameData.blackPlayer = 0;
+  gameData.whitePlayer = 1;
+
   wsServer.clients.forEach(client => {
     client.send(JSON.stringify({
       type: 'EVENT',
@@ -26,9 +30,56 @@ const handleGameReady = ({ ws, gameId }) => {
   });
 };
 
+const handleMoveRequest = ({ wsData, ws, gameId }) => {
+  const { row, col } = wsData;
+  const { gameData, wsServer, playersUUID } = WSS[gameId];
+
+  // check if it is a player
+  if (!playersUUID.includes(ws.uuid))
+    return;
+
+  // check if it their turn
+  if (playersUUID[gameData.playerTurn] !== ws.uuid)
+    return;
+
+  // check if the move is correct
+  // gameData.moves blabla;
+
+  // stone removals + new stone
+
+
+  // if we got this far broadcast
+  const newMoves = [
+    {
+      type: 'PLACE',
+      color: gameData.playerTurn === 0 ? 'BLACK' : 'WHITE',
+      row,
+      col
+    }
+  ];
+
+  gameData.playerTurn = (gameData.playerTurn + 1) % 2;
+  gameData.moves = [...(gameData.moves ?? []), ...newMoves];
+
+  const msg = JSON.stringify({
+    type: 'EVENT',
+    eventName: 'NEW_MOVES',
+    newMoves,
+    mutation: {
+      moves: gameData.moves,
+      playerTurn: gameData.playerTurn
+    }
+  });
+
+  wsServer.clients.forEach(client => {
+    client.send(msg);
+  });
+};
+
 
 const handlers = {
   'GAME_READY': handleGameReady,
+  'MOVE_REQUEST': handleMoveRequest,
 };
 
 /* TESTING MRAR; DISTRIBUTION MARBU */
