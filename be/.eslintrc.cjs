@@ -4,7 +4,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', '.eslintrc.mjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
   plugins: [
@@ -16,4 +16,4 @@ module.exports = {
     '@stylistic/js/no-trailing-spaces': 'error',
     '@stylistic/js/quotes': ['warn', 'single']
   },
-}
+};

@@ -2,7 +2,7 @@
   "name": "be",
   "version": "1.0.0",
   "description": "Backend for goworld app",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
@@ -10,6 +10,7 @@
     "coverage": "vitest run --coverage",
     "start:test": "NODE_ENV=test nodemon index.js"
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {
