@@ -10,7 +10,7 @@ const sendPing = require('../events/sendPing');
  * Creates a WebSocket for a new game
  * @param {String} gameId
  */
-const createGameWebSocket = (gameId) => {
+const createGameWebSocket = (gameId, boardSize = 19) => {
   // noServer options: for manual upgrade handle
   const wss = new WebSocket.WebSocketServer({ noServer: true });
   wss.on('connection', (ws) => {
@@ -55,7 +55,8 @@ const createGameWebSocket = (gameId) => {
       status: 'WAITING',
       readyCount: 0,
     },
-    playersUUID: []
+    playersUUID: [],
+    gameBoard: Array.from({ length: boardSize }, () => Array(boardSize).fill(0))
   };
 
   // const sizeof = require('object-sizeof');

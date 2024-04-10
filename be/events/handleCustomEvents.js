@@ -1,4 +1,7 @@
+const getRemovedStones = require('../../algos/removedStones');
+const { surrounded } = require('../../algos/utility');
 const { WSS } = require('../utils/cache');
+//import { WSS } from '../utils/cache';
 const logger = require('../utils/logger');
 
 
@@ -32,7 +35,8 @@ const handleGameReady = ({ ws, gameId }) => {
 
 const handleMoveRequest = ({ wsData, ws, gameId }) => {
   const { row, col } = wsData;
-  const { gameData, wsServer, playersUUID } = WSS[gameId];
+  console.log('MOVE REQUEST', row, col);
+  const { gameData, wsServer, playersUUID, gameBoard } = WSS[gameId];
 
   // check if it is a player
   if (!playersUUID.includes(ws.uuid))
@@ -43,30 +47,48 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     return;
 
   // check if the move is correct
-  // gameData.moves blabla;
+  if (gameBoard[row][col] !== 0 || surrounded(row, col, gameBoard))
+    return;
 
+  const newMoves = [];
   // stone removals + new stone
+  gameBoard[row][col] = gameData.playerTurn === 0 ? 'B' : 'W';
+  const removedStonesArray = getRemovedStones(row, col, gameBoard);
+  console.log('removedStones', removedStonesArray);
+  for (const rowcol of removedStonesArray) {
+    const seperator = rowcol.indexOf(',');
+    const row = rowcol.substring(0, seperator);
+    const col = rowcol.substring(seperator + 1);
+    newMoves.push({
+      type: 'REMOVE',
+      row: Number(row),
+      col: Number(col)
+    });
+  }
 
+  // update the 2d moves array
+  for (const move of newMoves) {
+    const { row, col, type, color } = move;
+    gameBoard[row][col] = type === 'PLACE' ? color[0] : 0;
+  }
+
+  newMoves.push({
+    type: 'PLACE',
+    color: gameData.playerTurn === 0 ? 'BLACK' : 'WHITE',
+    row,
+    col
+  });
 
   // if we got this far broadcast
-  const newMoves = [
-    {
-      type: 'PLACE',
-      color: gameData.playerTurn === 0 ? 'BLACK' : 'WHITE',
-      row,
-      col
-    }
-  ];
 
   gameData.playerTurn = (gameData.playerTurn + 1) % 2;
-  gameData.moves = [...(gameData.moves ?? []), ...newMoves];
 
   const msg = JSON.stringify({
     type: 'EVENT',
     eventName: 'NEW_MOVES',
     newMoves,
     mutation: {
-      moves: gameData.moves,
+      board: gameBoard,
       playerTurn: gameData.playerTurn
     }
   });
@@ -90,4 +112,6 @@ const handleCustomEvent = ({ wsData, ws, gameId }) => {
 };
 
 
-module.exports = handleCustomEvent;
+module.exports = {
+  handleCustomEvent, handleMoveRequest
+};

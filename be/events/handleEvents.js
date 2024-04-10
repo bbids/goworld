@@ -1,5 +1,5 @@
 const { WSS } = require('../utils/cache');
-const handleCustomEvent = require('./handleCustomEvents');
+const { handleCustomEvent } = require('./handleCustomEvents');
 const logger = require('../utils/logger');
 
 
