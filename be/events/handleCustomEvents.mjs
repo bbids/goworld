@@ -40,23 +40,24 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
 
   // check if it is a player
   if (!playersUUID.includes(ws.uuid))
-    return;
+    return false;
 
   // check if it their turn
   if (playersUUID[gameData.playerTurn] !== ws.uuid)
-    return;
+    return false;
 
   // check if stone is there already
   if (gameBoard[row][col] !== 0)
-    return;
+    return false;
 
   // check ko rule
   if (gameData.koRule !== null
     && `${row},${col}` === gameData.koRule)
-    return;
+    return false;
 
-  // 1) corners?
-  // 2) placing a stone in a surrounded group with 1 hole
+  // below check for suicide move is BUGGY!
+  // 1) todo: potential corner bug
+  // 2) todo: placing a stone in a surrounded group with 1 hole IS BROKEN
 
   // check if the move is a suicide
   const copy = structuredClone(gameBoard);
@@ -66,7 +67,7 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   && !getsCaptured(row + 1, col, copy, oppositeColor, new Set())
   && !getsCaptured(row, col - 1, copy, oppositeColor, new Set())
   && !getsCaptured(row, col + 1, copy, oppositeColor, new Set()))
-    return;
+    return false;
 
   // move is valid!
   gameBoard[row][col] = color;
@@ -126,6 +127,8 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   wsServer.clients.forEach(client => {
     client.send(msg);
   });
+
+  return true;
 };
 
 
