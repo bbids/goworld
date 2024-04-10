@@ -1,9 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
-const app = require('../server');
-const request = require('supertest');
-
-const _ = require('lodash');
+import app from '../server.mjs';
+import request from 'supertest';
+import _ from 'lodash';
 
 const sampleGameObject = {
   gameId: '22142124',
