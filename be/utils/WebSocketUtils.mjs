@@ -1,10 +1,10 @@
-const WebSocket = require('ws');
-const { v4: uuidv4 } = require('uuid');
-const { WSS } = require('./cache');
-const logger = require('./logger');
+import { WebSocketServer} from 'ws';
+import { v4 as uuidv4 } from 'uuid';
+import { WSS } from './cache.mjs';
+import logger from './logger.mjs';
 
-const handleEvent = require('../events/handleEvents');
-const sendPing = require('../events/sendPing');
+import handleEvent from '../events/handleEvents.mjs';
+import sendPing from '../events/sendPing.mjs';
 
 /**
  * Creates a WebSocket for a new game
@@ -12,7 +12,7 @@ const sendPing = require('../events/sendPing');
  */
 const createGameWebSocket = (gameId, boardSize = 19) => {
   // noServer options: for manual upgrade handle
-  const wss = new WebSocket.WebSocketServer({ noServer: true });
+  const wss = new WebSocketServer({ noServer: true });
   wss.on('connection', (ws) => {
     ws.isAlive = true;
     ws.uuid = uuidv4();
@@ -68,6 +68,6 @@ const cleanup = (gameId) => {
   delete WSS[gameId];
 };
 
-module.exports = {
+export {
   createGameWebSocket
 };

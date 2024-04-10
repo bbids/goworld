@@ -9,6 +9,6 @@
  */
 const WSS = Object.create(null);
 
-module.exports = {
+export {
   WSS
 };

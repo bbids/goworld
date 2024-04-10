@@ -11,4 +11,4 @@ const sendPing = (wss) => {
   }, 30000);
 };
 
-module.exports = sendPing;
+export default sendPing;

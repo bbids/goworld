@@ -1,6 +1,8 @@
-const playRouter = require('express').Router();
-const { createGameWebSocket } = require('../utils/WebSocketUtils');
-const { WSS } = require('../utils/cache');
+import { Router } from 'express';
+import { createGameWebSocket } from '../utils/WebSocketUtils.mjs';
+import { WSS } from '../utils/cache.mjs';
+
+const playRouter = Router();
 
 playRouter.get('/', (request, response) => {
   const games = {};
@@ -30,4 +32,4 @@ playRouter.get('/game/:id', async (request, response) => {
   response.status(200).json(WSS[gameId].gameData);
 });
 
-module.exports = playRouter;
+export default playRouter;

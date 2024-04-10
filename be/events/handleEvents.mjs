@@ -1,7 +1,6 @@
-const { WSS } = require('../utils/cache');
-const { handleCustomEvent } = require('./handleCustomEvents');
-const logger = require('../utils/logger');
-
+import { WSS } from '../utils/cache.mjs';
+import { handleCustomEvent } from './handleCustomEvents.mjs';
+import logger from '../utils/logger.mjs';
 
 const handleDefault = () => {
   logger.dev('handleEvents: Unknown wsData type');
@@ -37,4 +36,4 @@ const handleEvent = (wsData, ws, gameId) => {
 };
 
 
-module.exports = handleEvent;
+export default handleEvent;

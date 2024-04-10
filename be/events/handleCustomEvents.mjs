@@ -1,9 +1,7 @@
-const getRemovedStones = require('../../algos/removedStones');
-const { surrounded } = require('../../algos/utility');
-const { WSS } = require('../utils/cache');
-//import { WSS } from '../utils/cache';
-const logger = require('../utils/logger');
-
+import { getRemovedStones, getsCaptured } from '../../algos/removedStones.mjs';
+import { getOppositeColor } from '../../algos/utility.mjs';
+import { WSS } from '../utils/cache.mjs';
+import logger from '../utils/logger.mjs';
 
 const handleDefault = () => {
   logger.dev('handleCustomEvents: Unknown wsData type');
@@ -37,6 +35,8 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   const { row, col } = wsData;
   console.log('MOVE REQUEST', row, col);
   const { gameData, wsServer, playersUUID, gameBoard } = WSS[gameId];
+  const color = gameData.playerTurn === 0 ? 'B' : 'W';
+  const oppositeColor = getOppositeColor(color);
 
   // check if it is a player
   if (!playersUUID.includes(ws.uuid))
@@ -46,15 +46,39 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   if (playersUUID[gameData.playerTurn] !== ws.uuid)
     return;
 
-  // check if the move is correct
-  if (gameBoard[row][col] !== 0 || surrounded(row, col, gameBoard))
+  // check if stone is there already
+  if (gameBoard[row][col] !== 0)
     return;
 
-  const newMoves = [];
-  // stone removals + new stone
-  gameBoard[row][col] = gameData.playerTurn === 0 ? 'B' : 'W';
+  // check ko rule
+  if (gameData.koRule !== null
+    && `${row},${col}` === gameData.koRule)
+    return;
+
+  // 1) corners?
+  // 2) placing a stone in a surrounded group with 1 hole
+
+  // check if the move is a suicide
+  const copy = structuredClone(gameBoard);
+  copy[row][col] = color;
+  if (getsCaptured(row, col, copy, color, new Set())
+  && !getsCaptured(row - 1, col, copy, oppositeColor, new Set())
+  && !getsCaptured(row + 1, col, copy, oppositeColor, new Set())
+  && !getsCaptured(row, col - 1, copy, oppositeColor, new Set())
+  && !getsCaptured(row, col + 1, copy, oppositeColor, new Set()))
+    return;
+
+  // move is valid!
+  gameBoard[row][col] = color;
+
+  // temporary 0
+  const newMoves = [0];
+
+  // stone removals
   const removedStonesArray = getRemovedStones(row, col, gameBoard);
   console.log('removedStones', removedStonesArray);
+
+  // rowcol: `${row},${col}`
   for (const rowcol of removedStonesArray) {
     const seperator = rowcol.indexOf(',');
     const row = rowcol.substring(0, seperator);
@@ -66,21 +90,27 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     });
   }
 
-  // update the 2d moves array
-  for (const move of newMoves) {
-    const { row, col, type, color } = move;
-    gameBoard[row][col] = type === 'PLACE' ? color[0] : 0;
+  // update the gameBoard by removing stones
+  for (let i = 1; i < newMoves.length; i++) {
+    const { row, col } = newMoves[i];
+    gameBoard[row][col] = 0;
   }
 
-  newMoves.push({
+  // add this turns move (at start so its sorted PLACE -> REMOVE)
+  newMoves[0] = {
     type: 'PLACE',
     color: gameData.playerTurn === 0 ? 'BLACK' : 'WHITE',
     row,
     col
-  });
+  };
 
-  // if we got this far broadcast
+  // ko rule
+  if (removedStonesArray.length === 1)
+    gameData.koRule = removedStonesArray[0];
+  else
+    gameData.koRule = null;
 
+  // broadcast
   gameData.playerTurn = (gameData.playerTurn + 1) % 2;
 
   const msg = JSON.stringify({
@@ -104,14 +134,12 @@ const handlers = {
   'MOVE_REQUEST': handleMoveRequest,
 };
 
-/* TESTING MRAR; DISTRIBUTION MARBU */
-
 const handleCustomEvent = ({ wsData, ws, gameId }) => {
   const handler = handlers[wsData.eventName] || handleDefault;
   handler({ wsData, ws, gameId });
 };
 
 
-module.exports = {
+export {
   handleCustomEvent, handleMoveRequest
 };

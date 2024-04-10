@@ -8,6 +8,6 @@ const devError = (...params) => {
     console.error('ERR:', ...params);
 };
 
-module.exports = {
+export default {
   devError, dev
 };

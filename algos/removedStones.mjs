@@ -1,11 +1,14 @@
-const { isOnBoard } = require("./utility");
-
+import { isOnBoard } from "./utility.mjs";
+// TODO: testing
 
 // check if the (row, col) stone is a part of the group that
 // gets captured
-function getsCaptured(row, col, board, color, visited, removedStonesArray) {
+function getsCaptured(row, col, board, color, visited, removedStonesArray = []) {
   if (!isOnBoard(row, col, board))
     return true;
+
+  if (board[row][col] !== color)
+    return false;
 
   // if if it false where it was visited returns false there,
   // otherwise if here (row, col) is false than it returns here.
@@ -69,15 +72,17 @@ function getRemovedStones(row, col, board) {
   return removedStonesArray;
 }
 
-module.exports = getRemovedStones;
+export {
+  getRemovedStones, getsCaptured
+}
 
-const board = [
-  [0, 'B', 0],
-  ['B', 'W', 'B'],
-  [0, 'B', 'W']
-]
-
-const arr = getRemovedStones(2, 1, board);
+//const board = [
+//  [0, 'B', 0],
+//  ['B', 'W', 'B'],
+//  [0, 'B', 'W']
+//]
+//
+//const arr = getRemovedStones(2, 1, board);
 //
 //console.log(arr);
 //
@@ -95,9 +100,9 @@ const arr = getRemovedStones(2, 1, board);
 //]
 //
 //console.log(getRemovedStones(2, 1, board_3));
-
-const board_4 = [
-  ['B', 'W'],
-  ['B', 'W']
-]
-console.log(getRemovedStones(0, 1, board_4));
+//
+//const board_4 = [
+//  ['B', 'W'],
+//  ['B', 'W']
+//]
+//console.log(getRemovedStones(0, 1, board_4));

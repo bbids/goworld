@@ -6,6 +6,7 @@ function isOnBoard(row, col, board) {
   return row >= 0 && col >= 0 && row < board.length && col < board[0].length;
 }
 
+// todo: remove?
 function surrounded(row, col, board) {
   const color = board[row][col];
   const oppositeColor = getOppositeColor(color);
@@ -30,6 +31,6 @@ function surrounded(row, col, board) {
   return true;
 }
 
-module.exports = {
+export {
   surrounded, getOppositeColor, isOnBoard
-}
+};
