@@ -30,7 +30,7 @@ const getEventListeners = () => {
           document.dispatchEvent(newMove);
         });
       }
-    } */
+    }*/
   ];
 };
 

@@ -7,16 +7,15 @@ import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
 import { connection } from '../webSocket/connection';
 
 /*
-  0) Board is unfrozen (out turn)
   1) User places a stone
-  2) Board freezes
+  2) Board freezes ???
   3) App sends the move event request to WebSocket server
   4) WebSocket server confirms the move event as legal
   5) if legal; WebSocket server broadcasts to every player and spectator the move event
   5.1) if not legal; else handle differently  (to be done later)
   6) User receives the move event
-  7) App renders necessary changes, handle win conditons etc
-  8) Board is frozen untill the other player does something
+  7) App renders
+  8) Board is frozen untill the other player does something ???
 
   The server's move event includes an array of moves that players
   need to execute. This will incude add_stone, pass_stone, remove_stone, etc

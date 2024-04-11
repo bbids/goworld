@@ -3,6 +3,7 @@ import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
 import { connection } from '../webSocket/connection';
 import Board from '../components/Board';
+import PassBtn from '../components/PassBtn';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -82,6 +83,7 @@ const Game = () => {
 
       <p>We need a chat as well ..</p>
       <button onClick={sayHi}>sayHi</button>
+      <PassBtn />
 
       <p>We can now see status: {game?.status}</p>
     </div>

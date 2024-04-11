@@ -37,26 +37,32 @@ const connection = {
   },
 
   addGameMutationListener() {
+    this.errorCheck();
     return this.websocket.addGameMutationListener.apply(this.websocket, arguments);
   },
 
   addCustomEventListener() {
+    this.errorCheck();
     return this.websocket.addCustomEventListener.apply(this.websocket, arguments);
   },
 
   removeCustomEventListener() {
+    this.errorCheck();
     return this.websocket.removeCustomEventListener.apply(this.websocket, arguments);
   },
 
   removeAllCustomEventListeners() {
+    this.errorCheck();
     return this.websocket.removeAllCustomEventListeners.apply(this.websocket, arguments);
   },
 
   addCustomOnceEventListener() {
+    this.errorCheck();
     return this.websocket.addCustomOnceEventListener.apply(this.websocket, arguments);
   },
 
   send() {
+    this.errorCheck();
     return this.websocket.send.apply(this.websocket, arguments);
   },
 
@@ -64,6 +70,15 @@ const connection = {
     if (!this.websocket) return false;
     return this.websocket.isOpen.apply(this.websocket, arguments);
   },
+
+  errorCheck() {
+    if (!this.websocket) {
+      throw new Error('WebSocket is falsy');
+    }
+    if (!this.isOpen()) {
+      throw new Error('WebSocket is not OPEN');
+    }
+  }
 };
 
 export { connection };
