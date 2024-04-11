@@ -20,11 +20,15 @@ const Game = () => {
   const [game, setGame] = useState({});
   const gameId = useParams().gameId;
 
+  const [status, setStatus] = useState();
+  useEffect(() => {
+    setStatus(game.status);
+  }, [game.status]);
+
   useEffect(() => {
     const callback = (event) => {
       const changes = event.detail.mutation;
       setGame(pgame => ({...pgame, ...changes }));
-      console.log('game mutation occured');
     };
 
     document.addEventListener('mutation', callback);
@@ -85,7 +89,7 @@ const Game = () => {
       <button onClick={sayHi}>sayHi</button>
       <PassBtn />
 
-      <p>We can now see status: {game?.status}</p>
+      <p>We can now see status: {status}</p>
     </div>
   );
 };

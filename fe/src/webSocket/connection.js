@@ -23,6 +23,9 @@ const connection = {
     if (this.websocket) {
       this.websocket.raw.close();
       this.websocket = null;
+
+      const resetEvent = new CustomEvent('resetEvent');
+      document.dispatchEvent(resetEvent);
     }
   },
 

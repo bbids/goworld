@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import handleMoveRequest from '../events/handlers/handleMoveRequest.mjs';
+import handleMoveRequest from '../events/handlerImplementations/handleMoveRequest.mjs';
 
 import { WSS } from '../utils/cache.mjs';
 import * as utility from '../../algos/utility.mjs';

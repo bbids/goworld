@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import handlePass from '../events/handlers/handlePass.mjs';
+import handlePass from '../events/handlerImplementations/handlePass.mjs';
 
 import { WSS } from '../utils/cache.mjs';
 

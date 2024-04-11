@@ -1,7 +1,7 @@
 import { WSS } from '../utils/cache.mjs';
 import logger from '../utils/logger.mjs';
-import handleMoveRequest from './handlers/handleMoveRequest.mjs';
-import handlePass from './handlers/handlePass.mjs';
+import handleMoveRequest from './handlerImplementations/handleMoveRequest.mjs';
+import handlePass from './handlerImplementations/handlePass.mjs';
 
 const handleDefault = () => {
   logger.dev('handleCustomEvents: Unknown wsData type');

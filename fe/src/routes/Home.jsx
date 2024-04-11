@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import SideBar from '../components/SideBar';
@@ -11,6 +11,7 @@ import { connection } from '../webSocket/connection';
 const Home = () => {
   const { user, setUser } = useContext(UserContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (location.pathname !== '/play') {
@@ -30,6 +31,19 @@ const Home = () => {
     }
 
   }, [location.pathname, user, setUser]);
+
+  useEffect(() => {
+    const callback = () => {
+      const shouldMove = confirm('Double pass. Game over. Navigate to play page?');
+      if (shouldMove)
+        navigate('/play');
+    };
+    document.addEventListener('resetEvent', callback);
+
+    return () => {
+      document.removeEventListener('resetEvent', callback);
+    };
+  });
 
   return (
     <>

@@ -18,7 +18,7 @@ const devMutation = (type, wsData) => {
     && __MUTATION__) {
     // console.log(wsData.mutation);
 
-    console.log('mutation: ', type);
+    console.log('mutation: ', type, wsData.eventName);
     // console.log(mutationEventLog);
   }
 };

@@ -21,7 +21,7 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     return false;
 
   // check ko rule
-  if (gameData.koRule !== null
+  if (gameData.koRule
     && `${row},${col}` === gameData.koRule)
     return false;
 
@@ -75,7 +75,10 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   if (removedStonesArray.length === 1)
     gameData.koRule = removedStonesArray[0];
   else
-    gameData.koRule = null;
+    gameData.koRule = false;
+
+  // not a pass
+  gameData.pass = false;
 
   // broadcast
   gameData.playerTurn = (gameData.playerTurn + 1) % 2;
@@ -86,7 +89,8 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     newMoves,
     mutation: {
       board: gameBoard,
-      playerTurn: gameData.playerTurn
+      playerTurn: gameData.playerTurn,
+      pass: gameData.pass
     }
   });
 

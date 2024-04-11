@@ -11,6 +11,14 @@ const getEventListeners = () => {
         heartbeat(websocket.raw);
       }
     },
+    {
+      listenerName: 'endgame',
+      eventName: 'GAME_OVER',
+      callback: () => {
+        console.warn('GAME OVER');
+        connection.reset();
+      }
+    }
     /*{
       listenerName: '',
       eventName: 'NEW_MOVES',
