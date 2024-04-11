@@ -14,14 +14,14 @@ const connection = {
     const wsUrl = `ws://localhost:3000/${gameId}`; // baseUrl using vite env
     this.websocket = new GameWebSocket(wsUrl);
 
-    this.websocket.instance.addEventListener('close', () => {
+    this.websocket.raw.addEventListener('close', () => {
       this.reset();
     });
   },
 
   reset() {
     if (this.websocket) {
-      this.websocket.instance.close();
+      this.websocket.raw.close();
       this.websocket = null;
     }
   },
@@ -30,7 +30,7 @@ const connection = {
     if (this.isOpen()) {
       dispatchConnection(this.websocket);
     } else {
-      this.websocket.instance.addEventListener('open', () => {
+      this.websocket.raw.addEventListener('open', () => {
         dispatchConnection(this.websocket);
       });
     }
@@ -85,7 +85,7 @@ function Connection() {
     const wsUrl = `ws://localhost:3000/${gameId}`; // baseUrl using vite env
     this.websocket = new GameWebSocket(wsUrl);
 
-    this.websocket.instance.addEventListener('close', () => {
+    this.websocket.raw.addEventListener('close', () => {
       this.reset();
     });
 
@@ -93,7 +93,7 @@ function Connection() {
 
   this.reset = function () {
     if (this.websocket) {
-      this.websocket.instance.close();
+      this.websocket.raw.close();
       this.websocket = null;
     }
   },
@@ -103,7 +103,7 @@ function Connection() {
     if (this.isOpen()) {
       dispatchConnection(this.websocket);
     } else {
-      this.websocket.instance.addEventListener('open', () => {
+      this.websocket.raw.addEventListener('open', () => {
         dispatchConnection(this.websocket);
       });
     }

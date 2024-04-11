@@ -23,6 +23,7 @@ const Game = () => {
     const callback = (event) => {
       const changes = event.detail.mutation;
       setGame(pgame => ({...pgame, ...changes }));
+      console.log('game mutation occured');
     };
 
     document.addEventListener('mutation', callback);
@@ -77,7 +78,7 @@ const Game = () => {
   return (
     <div id='game' className='content'>
 
-      <Board />
+      <Board game={game}/>
 
       <p>We need a chat as well ..</p>
       <button onClick={sayHi}>sayHi</button>

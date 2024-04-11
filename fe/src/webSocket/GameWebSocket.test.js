@@ -36,8 +36,8 @@ describe('GameWebSocket test suite', () => {
         });
       });
 
-      websocket.instance.addEventListener('open', () => {
-        websocket.instance.send('123');
+      websocket.raw.addEventListener('open', () => {
+        websocket.raw.send('123');
       });
       await expect(promise).resolves.toBeTruthy();
     });
@@ -53,14 +53,14 @@ describe('GameWebSocket test suite', () => {
 
       const promise = new Promise((resolve) => {
         let msgCount = 0;
-        websocket.instance.addEventListener('open', () => {
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('4');
+        websocket.raw.addEventListener('open', () => {
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('4');
         });
 
-        websocket.instance.addEventListener('message', () => {
+        websocket.raw.addEventListener('message', () => {
           msgCount += 1;
           if (msgCount === 4)
             resolve(true);
@@ -105,8 +105,8 @@ describe('GameWebSocket test suite', () => {
         });
       });
 
-      websocket.instance.addEventListener('open', () => {
-        websocket.instance.send('123');
+      websocket.raw.addEventListener('open', () => {
+        websocket.raw.send('123');
       });
       await expect(promise).resolves.toBeTruthy();
     });
@@ -122,14 +122,14 @@ describe('GameWebSocket test suite', () => {
 
       const promise = new Promise((resolve) => {
         let msgCount = 0;
-        websocket.instance.addEventListener('open', () => {
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('4');
+        websocket.raw.addEventListener('open', () => {
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('4');
         });
 
-        websocket.instance.addEventListener('message', () => {
+        websocket.raw.addEventListener('message', () => {
           msgCount += 1;
           if (msgCount === 4)
             resolve(true);
@@ -178,14 +178,14 @@ describe('GameWebSocket test suite', () => {
 
       const promise = new Promise((resolve) => {
         let msgCount = 0;
-        websocket.instance.addEventListener('open', () => {
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('4');
+        websocket.raw.addEventListener('open', () => {
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('4');
         });
 
-        websocket.instance.addEventListener('message', () => {
+        websocket.raw.addEventListener('message', () => {
           msgCount += 1;
           if (msgCount === 4)
             resolve(true);
@@ -211,14 +211,14 @@ describe('GameWebSocket test suite', () => {
 
       const promise = new Promise((resolve) => {
         let msgCount = 0;
-        websocket.instance.addEventListener('open', () => {
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('123');
-          websocket.instance.send('4');
+        websocket.raw.addEventListener('open', () => {
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('123');
+          websocket.raw.send('4');
         });
 
-        websocket.instance.addEventListener('message', () => {
+        websocket.raw.addEventListener('message', () => {
           msgCount += 1;
           if (msgCount === 4)
             resolve(true);
@@ -259,8 +259,8 @@ describe('addGameMutationListener suite', () => {
       });
     });
 
-    websocket.instance.addEventListener('open', () => {
-      websocket.instance.send('123');
+    websocket.raw.addEventListener('open', () => {
+      websocket.raw.send('123');
     });
     await expect(promise).resolves.toBeTruthy();
 
@@ -289,7 +289,7 @@ describe('addGameMutationListener suite', () => {
         reject();
       });
 
-      websocket.instance.addEventListener('message', () => {
+      websocket.raw.addEventListener('message', () => {
         // send more msg just in case
         msgCount += 1;
         if (msgCount === 3)
@@ -297,10 +297,10 @@ describe('addGameMutationListener suite', () => {
       });
     });
 
-    websocket.instance.addEventListener('open', () => {
-      websocket.instance.send('123');
-      websocket.instance.send('123');
-      websocket.instance.send('123');
+    websocket.raw.addEventListener('open', () => {
+      websocket.raw.send('123');
+      websocket.raw.send('123');
+      websocket.raw.send('123');
     });
     await expect(promise).resolves.toBeTruthy();
   });

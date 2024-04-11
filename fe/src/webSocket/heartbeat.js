@@ -5,16 +5,16 @@ import logger from '../utils/logger';
  * Potential for pausing the connection, if user leaves
  * instead of directly closing the socket if game doesn't render.
  */
-const heartbeat = (wsInstance, retryTimeout = 5000) => {
+const heartbeat = (wsraw, retryTimeout = 5000) => {
   const interval = setInterval(() => {
-    if (wsInstance.readyState !== WebSocket.OPEN)
+    if (wsraw.readyState !== WebSocket.OPEN)
     {
       clearInterval(interval);
     }
     else if (!document.getElementById('game'))
     {
       logger.dev('Client side ping verification failed. ');
-      wsInstance.close();
+      wsraw.close();
       clearInterval(interval);
     }
   }, retryTimeout);

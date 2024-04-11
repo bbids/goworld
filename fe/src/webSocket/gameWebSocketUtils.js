@@ -9,8 +9,6 @@ const subscribeToGameMutation = () => {
       return;
     }
 
-    logger.dev('mutation: ', mutation);
-
     const mutationEvent = new CustomEvent('mutation', {
       detail: {
         mutation

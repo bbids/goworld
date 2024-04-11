@@ -25,16 +25,18 @@ const drawGrid = ({ canvasRef, boardSize, cellSize }) => {
 
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 2;
-  for (let i = 0; i <= boardSize; i++) {
+  for (let i = 0; i < boardSize; i++) {
     ctx.beginPath();
     ctx.moveTo(i * cellSize, 0);
     ctx.lineTo(i * cellSize, cellSize * boardSize);
     ctx.stroke();
+    ctx.closePath();
 
     ctx.beginPath();
     ctx.moveTo(0, i * cellSize);
     ctx.lineTo(cellSize * boardSize, i * cellSize);
     ctx.stroke();
+    ctx.closePath();
   }
 };
 
@@ -42,8 +44,10 @@ const drawBackgroundDefault = (canvasRef) => {
   const canvas = canvasRef.current;
   const ctx = canvas.getContext('2d');
 
+  ctx.beginPath();
   ctx.fillStyle = 'rgb(139, 69, 19)';
   ctx.fillRect(0, 0, 608, 608);
+  ctx.closePath();
 };
 
 

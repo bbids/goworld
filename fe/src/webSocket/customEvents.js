@@ -8,7 +8,7 @@ const getEventListeners = () => {
       listenerName: 'heartbeat',
       eventName: 'GAME_START',
       callback: (websocket) => {
-        heartbeat(websocket.instance);
+        heartbeat(websocket.raw);
       }
     },
     {

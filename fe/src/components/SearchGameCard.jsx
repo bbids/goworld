@@ -21,7 +21,7 @@ const SearchGameCard = () => {
 
       connection.establish(gameData.gameId);
 
-      connection.websocket.instance.addEventListener('open', () => {
+      connection.websocket.raw.addEventListener('open', () => {
         setUser({ type: 'START_QUEUE', payload: {
           gameId: gameData.gameId
         }});

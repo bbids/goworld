@@ -11,22 +11,22 @@ function GameWebSocket(wsUrl) {
   const _onceEventListeners = new Set();
   let _handleMutation = () => { };
 
-  this.instance = new WebSocket(wsUrl);
+  this.raw = new WebSocket(wsUrl);
 
-  this.instance.addEventListener('open', () => {
+  this.raw.addEventListener('open', () => {
     logger.dev('Connected to WebSocket Server');
   });
 
-  this.instance.addEventListener('close', () => {
+  this.raw.addEventListener('close', () => {
     logger.dev('Closed connection to WebSocket Server');
   });
 
-  this.instance.addEventListener('error', (error) => {
-    this.instance.close();
+  this.raw.addEventListener('error', (error) => {
+    this.raw.close();
     logger.devError(error);
   });
 
-  this.instance.onmessage = (event) => {
+  this.raw.onmessage = (event) => {
     const wsData = JSON.parse(event.data);
     _handleEvent(wsData);
   };
@@ -48,11 +48,11 @@ function GameWebSocket(wsUrl) {
   };
 
   const _handlePing = () => {
-    this.instance.send(JSON.stringify({ type: 'PONG' }));
+    this.raw.send(JSON.stringify({ type: 'PONG' }));
   };
 
   const _handleSpectator = () => {
-    heartbeat(this.instance);
+    heartbeat(this.raw);
     logger.dev('You are a spectator.');
   };
 
@@ -76,11 +76,12 @@ function GameWebSocket(wsUrl) {
 
   const _handleEvent = (wsData) => {
     const handler = _handlers[wsData.type] || _handleDefault;
-    handler(wsData);
     if (wsData.mutation) {
       _handleMutation(wsData.mutation);
       logger.devMutation(wsData.type, wsData);
     }
+    handler(wsData);
+
   };
 
   /**
@@ -154,11 +155,11 @@ function GameWebSocket(wsUrl) {
   };
 
   this.send = function (msg) {
-    this.instance.send(msg);
+    this.raw.send(msg);
   };
 
   this.isOpen = function () {
-    return this.instance.readyState === WebSocket.OPEN;
+    return this.raw.readyState === WebSocket.OPEN;
   };
 
   return this;

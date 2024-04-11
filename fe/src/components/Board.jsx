@@ -5,6 +5,7 @@ import wstone from '../assets/wstone.png';
 import { UserContext } from '../contexts/UserContext';
 import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
 import { connection } from '../webSocket/connection';
+import logger from '../utils/logger';
 
 /*
   0) Board is unfrozen (out turn)
@@ -30,7 +31,7 @@ import { connection } from '../webSocket/connection';
   and then synchronize with React.
 */
 
-const Board = () => {
+const Board = ({ game }) => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef(null);
   const cellSize = 32;
@@ -84,18 +85,67 @@ const Board = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!game.board) return;
+
+    // 1) Cache images
+    // 2) cleanup the code
+
+    const ctx = canvasRef.current.getContext('2d');
+    ctx.reset();
+
+    drawBackgroundDefault(canvasRef);
+    drawGrid({ canvasRef, boardSize: 19, cellSize: 32});
+    for(let row = 0; row < game.board.length; row++) {
+      for (let col = 0; col < game.board[row].length; col++) {
+        if (game.board[row][col] !== 0) {
+          const ev = new CustomEvent('DRAW_STONE', {
+            detail: {
+              row,
+              col,
+              color: game.board[row][col] === 'B' ? 'BLACK' : 'WHITE'
+            }
+          });
+          document.dispatchEvent(ev);
+        }
+      }
+    }
+  }, [game.board]);
+
   // Remove stone
   useEffect(() => {
-    const callback = () => {
-      /*
+    const callback = (event) => {
       const { row, col } = event.detail;
+      logger.dev('removed: ', row, col);
+
       const ctx = canvasRef.current.getContext('2d');
 
       const x = col * cellSize;
       const y = row * cellSize;
 
-      ctx.clear(x - cellSize / 2, y - cellSize / 2, cellSize, cellSize)
-      */
+      ctx.clearRect(x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
+      // ctx.clearRect(0, 0, 304, 304);
+      // ctx.reset();
+      // logger.dev('reset', game);
+      //
+      // // again state problem, IT IS TOO LATE
+      //
+      // drawBackgroundDefault(canvasRef);
+      // drawGrid({ canvasRef, boardSize: 19, cellSize: 32});
+      // for(let row = 0; row < game.board.length; row++) {
+      //   for (let col = 0; col < game.board[row].length; col++) {
+      //     if (game.board[row][col] !== 0) {
+      //       const ev = new CustomEvent('DRAW_STONE', {
+      //         detail: {
+      //           row,
+      //           col,
+      //           color: game.board[row][col] === 'B' ? 'BLACK' : 'WHITE'
+      //         }
+      //       });
+      //       document.dispatchEvent(ev);
+      //     }
+      //   }
+      // }
     };
 
     document.addEventListener('REMOVE_STONE', callback);
@@ -103,7 +153,7 @@ const Board = () => {
     return () => {
       document.removeEventListener('REMOVE_STONE', callback);
     };
-  }, []);
+  }, [game]);
 
   // Board draw
   useEffect(() => {
@@ -115,7 +165,7 @@ const Board = () => {
 
   return (
     <>
-      <canvas id='board' data-testid='board' ref={canvasRef} width={608} height={608} />
+      <canvas id='board' data-testid='board' ref={canvasRef} width={576} height={576} />
     </>
   );
 };
