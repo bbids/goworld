@@ -11,7 +11,7 @@ const getEventListeners = () => {
         heartbeat(websocket.raw);
       }
     },
-    {
+    /*{
       listenerName: '',
       eventName: 'NEW_MOVES',
       callback: (websocket, wsData) => {
@@ -30,7 +30,7 @@ const getEventListeners = () => {
           document.dispatchEvent(newMove);
         });
       }
-    }
+    } */
   ];
 };
 

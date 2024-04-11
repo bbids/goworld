@@ -1,11 +1,10 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import bstone from '../assets/bstone.png';
 import wstone from '../assets/wstone.png';
 import { UserContext } from '../contexts/UserContext';
 import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
 import { connection } from '../webSocket/connection';
-import logger from '../utils/logger';
 
 /*
   0) Board is unfrozen (out turn)
@@ -36,6 +35,22 @@ const Board = ({ game }) => {
   const canvasRef = useRef(null);
   const cellSize = 32;
 
+  // Preload stone images
+  const [stoneImages, setStoneImages] = useState({});
+  useEffect(() => {
+    const blackStoneImg = new Image();
+    blackStoneImg.src = bstone;
+    blackStoneImg.onload = () => {
+      setStoneImages(prevState => ({ ...prevState, blackStone: blackStoneImg}));
+    };
+
+    const whiteStoneImg = new Image();
+    whiteStoneImg.src = wstone;
+    whiteStoneImg.onload = () => {
+      setStoneImages(prevState => ({ ...prevState, whiteStone: whiteStoneImg}));
+    };
+  }, []);
+
   // Move request
   useEffect(() => {
     if (user.userStatus !== 'GAME')
@@ -45,7 +60,6 @@ const Board = ({ game }) => {
 
     const moveRequest = (event) => {
       const { row, col } = getRowAndCol(event, canvasRef);
-
       connection.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'MOVE_REQUEST',
@@ -71,11 +85,15 @@ const Board = ({ game }) => {
       const x = col * cellSize;
       const y = row * cellSize;
 
-      const stoneImg = new Image();
-      stoneImg.src = color === 'BLACK' ? bstone : wstone;
-      stoneImg.addEventListener('load', () => {
+      let stoneImg;
+      if (color === 'BLACK')
+        stoneImg = stoneImages.blackStone;
+      else
+        stoneImg = stoneImages.whiteStone;
+
+      if(stoneImg) {
         ctx.drawImage(stoneImg, x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
-      });
+      }
     };
 
     document.addEventListener('DRAW_STONE', drawStone);
@@ -83,7 +101,7 @@ const Board = ({ game }) => {
     return () => {
       document.removeEventListener('DRAW_STONE', drawStone);
     };
-  }, []);
+  }, [stoneImages]);
 
   useEffect(() => {
     if (!game.board) return;
@@ -111,6 +129,7 @@ const Board = ({ game }) => {
       }
     }
   }, [game.board]);
+  /*
 
   // Remove stone
   useEffect(() => {
@@ -123,7 +142,7 @@ const Board = ({ game }) => {
       const x = col * cellSize;
       const y = row * cellSize;
 
-      ctx.clearRect(x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
+      //ctx.clearRect(x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
       // ctx.clearRect(0, 0, 304, 304);
       // ctx.reset();
       // logger.dev('reset', game);
@@ -153,7 +172,7 @@ const Board = ({ game }) => {
     return () => {
       document.removeEventListener('REMOVE_STONE', callback);
     };
-  }, [game]);
+  }, [game]); */
 
   // Board draw
   useEffect(() => {
