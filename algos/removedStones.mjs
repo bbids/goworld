@@ -1,14 +1,12 @@
 import { isOnBoard } from "./utility.mjs";
 // TODO: testing
+// TODO: union find? dp? bfs/dfs?
 
 // check if the (row, col) stone is a part of the group that
 // gets captured
 function getsCaptured(row, col, board, color, visited, removedStonesArray = []) {
   if (!isOnBoard(row, col, board))
     return true;
-
-  if (board[row][col] !== color)
-    return false;
 
   // if if it false where it was visited returns false there,
   // otherwise if here (row, col) is false than it returns here.
@@ -49,9 +47,9 @@ function getRemovedStones(row, col, board) {
 
   const visited = new Set();
 
-  for (let i = 0; i < directions.length; i++) {
-    const newRow = row + directions[i][0];
-    const newCol = col + directions[i][1];
+  for (const [dr, dc] of directions) {
+    const newRow = row + dr;
+    const newCol = col + dc;
 
     if (isOnBoard(newRow, newCol, board)
       && board[newRow][newCol] === oppositeColor

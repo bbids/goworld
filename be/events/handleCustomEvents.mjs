@@ -1,5 +1,5 @@
-import { getRemovedStones, getsCaptured } from '../../algos/removedStones.mjs';
-import { getOppositeColor } from '../../algos/utility.mjs';
+import { getRemovedStones } from '../../algos/removedStones.mjs';
+import { isSuicide, isSuicideNeighbour } from '../../algos/utility.mjs';
 import { WSS } from '../utils/cache.mjs';
 import logger from '../utils/logger.mjs';
 
@@ -36,7 +36,6 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   console.log('MOVE REQUEST', row, col);
   const { gameData, wsServer, playersUUID, gameBoard } = WSS[gameId];
   const color = gameData.playerTurn === 0 ? 'B' : 'W';
-  const oppositeColor = getOppositeColor(color);
 
   // check if it is a player
   if (!playersUUID.includes(ws.uuid))
@@ -55,18 +54,14 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     && `${row},${col}` === gameData.koRule)
     return false;
 
-  // below check for suicide move is BUGGY!
-  // 1) todo: potential corner bug
-  // 2) todo: placing a stone in a surrounded group with 1 hole IS BROKEN
-
   // check if the move is a suicide
   const copy = structuredClone(gameBoard);
   copy[row][col] = color;
-  if (getsCaptured(row, col, copy, color, new Set())
-  && !getsCaptured(row - 1, col, copy, oppositeColor, new Set())
-  && !getsCaptured(row + 1, col, copy, oppositeColor, new Set())
-  && !getsCaptured(row, col - 1, copy, oppositeColor, new Set())
-  && !getsCaptured(row, col + 1, copy, oppositeColor, new Set()))
+  if (isSuicide(row, col, copy, color)
+  && !isSuicideNeighbour(row - 1, col, copy, color)
+  && !isSuicideNeighbour(row + 1, col, copy, color)
+  && !isSuicideNeighbour(row, col - 1, copy, color)
+  && !isSuicideNeighbour(row, col + 1, copy, color))
     return false;
 
   // move is valid!

@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { handleMoveRequest } from '../events/handleCustomEvents.mjs';
 
 import { WSS } from '../utils/cache.mjs';
+import * as utility from '../../algos/utility.mjs';
 import * as removedStones from '../../algos/removedStones.mjs';
 
 const gameId = '1111';
@@ -43,7 +44,7 @@ describe('handeMoveRequest', () => {
   describe('on valid move', () => {
     it('returns true', () => {
       // setup
-      vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+      vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
       vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
       const ws = { uuid: 0 };
@@ -62,7 +63,7 @@ describe('handeMoveRequest', () => {
 
     it('should change player turn 0->1', () => {
       // setup
-      vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+      vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
       vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
       const ws = { uuid: 0 };
@@ -81,7 +82,7 @@ describe('handeMoveRequest', () => {
 
     it('should change player turn 1->0', () => {
       // setup
-      vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+      vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
       vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
       WSS[gameId].gameData.playerTurn = 1;
@@ -102,7 +103,7 @@ describe('handeMoveRequest', () => {
 
     it('should call getRemovedStones', () => {
       // setup
-      vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+      const isSuicide = vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
       const getRemovedStones = vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
       const ws = { uuid: 0 };
@@ -116,12 +117,13 @@ describe('handeMoveRequest', () => {
       handleMoveRequest({ wsData, ws, gameId });
 
       // assert
+      expect(isSuicide).toHaveBeenCalledOnce();
       expect(getRemovedStones).toHaveBeenCalledOnce();
     });
 
     it('should broadcast changes', () => {
       // setup
-      vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+      vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
 
       vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
@@ -147,7 +149,7 @@ describe('handeMoveRequest', () => {
     describe('should correctly update gameBoard', () => {
       it('if there are no removed stones', () => {
         // setup
-        vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+        vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
 
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
@@ -178,7 +180,7 @@ describe('handeMoveRequest', () => {
         ];
 
 
-        vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+        vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
 
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => ['1,1']);
 
@@ -209,7 +211,7 @@ describe('handeMoveRequest', () => {
         ];
 
 
-        vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+        vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => ['2,1', '1,0', '1,2']);
 
         const ws = { uuid: 0 };
@@ -237,7 +239,7 @@ describe('handeMoveRequest', () => {
         WSS[gameId].gameBoard[17][0] = 'B';
         WSS[gameId].gameBoard[18][0] = 'W';
 
-        vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+        vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => ['18,0']);
 
         const ws = { uuid: 0 };
@@ -260,7 +262,7 @@ describe('handeMoveRequest', () => {
     describe('should correctly broadcast newMoves', () => {
       it('if there are 0 removed stones', () => {
         // setup
-        vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+        vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
         const ws = { uuid: 0 };
@@ -298,7 +300,7 @@ describe('handeMoveRequest', () => {
         ];
 
 
-        vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+        vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => ['1,1']);
 
         const ws = { uuid: 0 };
@@ -336,7 +338,7 @@ describe('handeMoveRequest', () => {
   describe('returns false', () => {
 
     it('if it is not players turn', () => {
-      vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+      vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
       vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
       const ws = { uuid: 1 };
@@ -355,7 +357,7 @@ describe('handeMoveRequest', () => {
   });
 
   it('if it is not a player uuid', () => {
-    vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+    vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
     vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
     const ws = { uuid: 'warnoiawrnawro' };
@@ -379,7 +381,7 @@ describe('handeMoveRequest', () => {
       [0, 0]
     ];
 
-    vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+    vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
     vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
     const ws = { uuid: 0 };
@@ -407,7 +409,7 @@ describe('handeMoveRequest', () => {
     // previously removed: 1,1
     WSS[gameId].gameData.koRule = `${1},${1}`;
 
-    vi.spyOn(removedStones, 'getsCaptured').mockImplementation(() => false);
+    vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
     vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
 
     const ws = { uuid: 0 };
