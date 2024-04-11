@@ -44,7 +44,7 @@ describe('BOARD', () => {
   it('when clicking on a board, sends move request', async () => {
     const { getByTestId } = render(
       <UserContext.Provider value={mockUserContext}>
-        <Board />
+        <Board game={ { board: null } }/>
       </UserContext.Provider>
     );
     let success = false;
