@@ -8,8 +8,8 @@ const getEventListeners = () => {
       listenerName: 'messages',
       eventName: 'MESSAGE',
       // todo: fix arguments, use object (like props) instead
-      callback: (websocket, wsData) => {
-        const msgEvent= new CustomEvent('msgEvent', {
+      callback: ({ wsData }) => {
+        const msgEvent = new CustomEvent('msgEvent', {
           detail: {
             message: wsData.message
           }
@@ -20,7 +20,7 @@ const getEventListeners = () => {
     {
       listenerName: 'heartbeat',
       eventName: 'GAME_START',
-      callback: (websocket) => {
+      callback: ({ websocket }) => {
         heartbeat(websocket.raw);
       }
     },
@@ -60,7 +60,12 @@ const subscribeToCustomEvents = () => {
   eventListeners.forEach(listener => {
     connection.addCustomEventListener(
       listener.eventName,
-      (wsData) => { listener.callback(connection.websocket, wsData); });
+      (wsData) => {
+        listener.callback({
+          websocket: connection.websocket,
+          wsData
+        });
+      });
   });
 };
 
