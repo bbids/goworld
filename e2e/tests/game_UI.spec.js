@@ -36,12 +36,12 @@ test.describe('Joining the game page', () => {
 
     await expect(
       page
-        .getByRole('button', { name: 'sayHi' })
+        .getByRole('button', { name: 'Pass' })
     ).toBeVisible();
 
     await expect(
       pageA
-        .getByRole('button', { name: 'sayHi' })
+        .getByRole('button', { name: 'Pass' })
     ).toBeVisible();
   });
 

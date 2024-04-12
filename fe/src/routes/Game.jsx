@@ -21,11 +21,13 @@ const Game = () => {
   const [game, setGame] = useState({});
   const gameId = useParams().gameId;
 
+  // some UI
   const [status, setStatus] = useState();
   useEffect(() => {
     setStatus(game.status);
   }, [game.status]);
 
+  // Mutation
   useEffect(() => {
     const callback = (event) => {
       const changes = event.detail.mutation;
@@ -72,15 +74,6 @@ const Game = () => {
     connection.dispatchEvent();
   }, [user, setUser, gameId]);
 
-  const sayHi = () => {
-    if (connection.isOpen())
-      connection.send(JSON.stringify({
-        type: 'MESSAGE',
-        message: 'HI!'
-      }));
-  };
-
-
   return (
     <div id='game' className='content'>
 
@@ -88,7 +81,6 @@ const Game = () => {
 
       <div id='game_sidebar'>
         <div id='game_foot'>
-          <button onClick={sayHi}>sayHi</button>
           <PassBtn />
           <p>We can now see status: {status}</p>
         </div>

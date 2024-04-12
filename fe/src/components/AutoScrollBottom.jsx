@@ -1,7 +1,7 @@
-import './Scroller.css';
+import './AutoScrollBottom.css';
 
 /*
-https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/
+alternative: https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/
 */
 
 

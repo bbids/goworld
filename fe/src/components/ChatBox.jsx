@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { connection } from '../webSocket/connection';
-import Scroller from './Scroller';
+import AutoScrollBottom from './AutoScrollBottom';
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
@@ -37,11 +37,11 @@ const ChatBox = () => {
 
   return (
     <div id='chatbox'>
-      <Scroller>
+      <AutoScrollBottom>
         {messages.map((msg, ind) => {
           return <p key={ind}>{msg}</p>;
         })}
-      </Scroller>
+      </AutoScrollBottom>
 
       <div id='chatbox_send'>
         <form onSubmit={sendMessage}>
