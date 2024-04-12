@@ -19,7 +19,7 @@ function isSuicide(row, col, copy, color) {
 
 function isSuicideNeighbour(row, col, copy, centerColor) {
   if (!isOnBoard(row, col, copy)) {
-    return true;
+    return false;
   }
   const color = copy[row][col];
   if (centerColor === color)
