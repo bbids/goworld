@@ -68,6 +68,7 @@ describe('handlePass', () => {
         type: 'EVENT',
         eventName: 'PASS',
         mutation: {
+          pass: true,
           playerTurn: 1
         }
       });

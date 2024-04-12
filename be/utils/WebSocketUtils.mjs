@@ -54,6 +54,8 @@ const createGameWebSocket = (gameId, boardSize = 19) => {
       count: 0,
       status: 'WAITING',
       readyCount: 0,
+      pass: false,
+      koRule: false
     },
     playersUUID: [],
     gameBoard: Array.from({ length: boardSize }, () => Array(boardSize).fill(0))
