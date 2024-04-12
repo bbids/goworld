@@ -5,7 +5,8 @@ import { WSS } from '../../utils/cache.mjs';
 const handleMoveRequest = ({ wsData, ws, gameId }) => {
   const { row, col } = wsData;
   console.log('MOVE REQUEST', row, col);
-  const { gameData, wsServer, playersUUID, gameBoard } = WSS[gameId];
+  const { gameData, wsServer, playersUUID } = WSS[gameId];
+  const { board } = gameData;
   const color = gameData.playerTurn === 0 ? 'B' : 'W';
 
   // check if it is a player
@@ -17,7 +18,7 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     return false;
 
   // check if stone is there already
-  if (gameBoard[row][col] !== 0)
+  if (board[row][col] !== 0)
     return false;
 
   // check ko rule
@@ -26,7 +27,7 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     return false;
 
   // check if the move is a suicide
-  const copy = structuredClone(gameBoard);
+  const copy = structuredClone(board);
   copy[row][col] = color;
   if (isSuicide(row, col, copy, color)
   && !isSuicideNeighbour(row - 1, col, copy, color)
@@ -36,13 +37,13 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     return false;
 
   // move is valid!
-  gameBoard[row][col] = color;
+  board[row][col] = color;
 
   // temporary 0
   const newMoves = [0];
 
   // stone removals
-  const removedStonesArray = getRemovedStones(row, col, gameBoard);
+  const removedStonesArray = getRemovedStones(row, col, board);
   console.log('removedStones', removedStonesArray);
 
   // rowcol: `${row},${col}`
@@ -60,7 +61,7 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
   // update the gameBoard by removing stones
   for (let i = 1; i < newMoves.length; i++) {
     const { row, col } = newMoves[i];
-    gameBoard[row][col] = 0;
+    board[row][col] = 0;
   }
 
   // add this turns move (at start so its sorted PLACE -> REMOVE)
@@ -88,7 +89,7 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     eventName: 'NEW_MOVES',
     newMoves,
     mutation: {
-      board: gameBoard,
+      board,
       playerTurn: gameData.playerTurn,
       pass: gameData.pass
     }

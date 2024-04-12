@@ -7,7 +7,6 @@ const getEventListeners = () => {
     {
       listenerName: 'messages',
       eventName: 'MESSAGE',
-      // todo: fix arguments, use object (like props) instead
       callback: ({ wsData }) => {
         const msgEvent = new CustomEvent('msgEvent', {
           detail: {

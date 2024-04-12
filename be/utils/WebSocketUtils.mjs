@@ -47,6 +47,8 @@ const createGameWebSocket = (gameId, boardSize = 19) => {
     clearInterval(pingInterval);
   });
 
+  const gameBoard = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
+
   WSS[gameId] = {
     wsServer: wss,
     gameData: {
@@ -54,11 +56,12 @@ const createGameWebSocket = (gameId, boardSize = 19) => {
       count: 0,
       status: 'WAITING',
       readyCount: 0,
+      board: gameBoard,
+      boardSize,
       pass: false,
       koRule: false
     },
     playersUUID: [],
-    gameBoard: Array.from({ length: boardSize }, () => Array(boardSize).fill(0))
   };
 
   // const sizeof = require('object-sizeof');

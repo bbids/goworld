@@ -15,9 +15,13 @@ const SearchGameCard = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const startSearching = async () => {
+  const startSearching = async (event) => {
+    event.preventDefault();
+
     try {
-      const gameData = await gameService.createGame();
+      const boardSize = prompt('game size?');
+      console.log(boardSize);
+      const gameData = await gameService.createGame(Number(boardSize));
 
       connection.establish(gameData.gameId);
 
@@ -51,7 +55,9 @@ const SearchGameCard = () => {
           <button onClick={stopSearching}>Stop</button>
         </>
         :
-        <button onClick={startSearching}>Play</button>
+        <form onSubmit={startSearching}>
+          <button type='submit'>Play</button>
+        </form>
       }
     </>
   );

@@ -14,11 +14,12 @@ playRouter.get('/', (request, response) => {
   response.status(200).json(games);
 });
 
-playRouter.get('/create_game', async (request, response) => {
+playRouter.post('/create_game', async (request, response) => {
   // for now use uuid, can make string generator latern
   const gameId = (Math.floor(Math.random()*(1e8 - 1e6) + 1e6)).toString();
+  const boardSize = request.body.boardSize ?? 19;
 
-  await createGameWebSocket(gameId);
+  await createGameWebSocket(gameId, boardSize);
   response.status(201).json(WSS[gameId].gameData);
 });
 

@@ -32,7 +32,7 @@ import { connection } from '../webSocket/connection';
 const Board = ({ game }) => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef(null);
-  const cellSize = 32;
+  const cellSize = canvasRef.current?.width / (game.boardSize - 1);
 
   // Preload stone images
   const [stoneImages, setStoneImages] = useState({});
@@ -50,15 +50,18 @@ const Board = ({ game }) => {
     };
   }, []);
 
+
   // Move request
   useEffect(() => {
     if (user.userStatus !== 'GAME')
+      return;
+    if (!canvasRef.current)
       return;
 
     const canvas = canvasRef.current;
 
     const moveRequest = (event) => {
-      const { row, col } = getRowAndCol(event, canvasRef);
+      const { row, col } = getRowAndCol(event, canvasRef, cellSize);
       connection.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'MOVE_REQUEST',
@@ -72,12 +75,14 @@ const Board = ({ game }) => {
     return () => {
       canvas.removeEventListener('click', moveRequest);
     };
-  }, [user]);
+  }, [user, cellSize]);
 
 
   // Draw stone
   useEffect(() => {
     const drawStone = (event) => {
+      if (!canvasRef.current)
+        return;
       const { row, col, color } = event.detail;
       const ctx = canvasRef.current.getContext('2d');
 
@@ -100,19 +105,24 @@ const Board = ({ game }) => {
     return () => {
       document.removeEventListener('DRAW_STONE', drawStone);
     };
-  }, [stoneImages]);
+  }, [stoneImages, cellSize]);
 
+
+  // render the board
   useEffect(() => {
     if (!game.board) return;
-
-    // 1) Cache images
-    // 2) cleanup the code
+    if (!canvasRef.current) return;
 
     const ctx = canvasRef.current.getContext('2d');
     ctx.reset();
 
     drawBackgroundDefault(canvasRef);
-    drawGrid({ canvasRef, boardSize: 19, cellSize: 32});
+    drawGrid({
+      canvasRef,
+      boardSize: game.boardSize,
+      cellSize
+    });
+
     for(let row = 0; row < game.board.length; row++) {
       for (let col = 0; col < game.board[row].length; col++) {
         if (game.board[row][col] !== 0) {
@@ -127,15 +137,7 @@ const Board = ({ game }) => {
         }
       }
     }
-  }, [game.board]);
-
-  // Board draw
-  useEffect(() => {
-    // todo: compute dimensions and cell size and all of that
-    // default: 608x608 size, 19x19 cells, 32 cellsize
-    drawBackgroundDefault(canvasRef);
-    drawGrid({ canvasRef, boardSize: 19, cellSize: 32 });
-  }, []);
+  }, [game.board, game.boardSize, cellSize]);
 
   return (
     <div id='board'>

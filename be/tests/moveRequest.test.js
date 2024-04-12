@@ -21,9 +21,9 @@ vi.mock('../utils/cache', () => {
         playersUUID: [0, 1],
         gameData: {
           playerTurn: 0,
+          board: [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         },
         // gameBoard: Array.from(19, Array(19).fill(0))
-        gameBoard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         koRule: false
       }
     }
@@ -33,8 +33,10 @@ vi.mock('../utils/cache', () => {
 describe('handeMoveRequest', () => {
 
   beforeEach(() => {
-    WSS[gameId].gameData = { playerTurn: 0 };
-    WSS[gameId].gameBoard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    WSS[gameId].gameData = {
+      playerTurn: 0,
+      board: [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    };
   });
 
   afterEach(() => {
@@ -146,7 +148,7 @@ describe('handeMoveRequest', () => {
       expect(receive.msg).not.toBeNull();
     });
 
-    describe('should correctly update gameBoard', () => {
+    describe('should correctly update game\'s board', () => {
       it('if there are no removed stones', () => {
         // setup
         vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
@@ -155,16 +157,17 @@ describe('handeMoveRequest', () => {
 
         const ws = { uuid: 0 };
         const wsData = { row: 0, col: 0 };
+        const { wsServer, gameData } = WSS[gameId];
 
         const clientSend = vi.fn();
 
-        WSS[gameId].wsServer.clients.push({ send: clientSend });
+        wsServer.clients.push({ send: clientSend });
 
         // action
         handleMoveRequest({ wsData, ws, gameId });
 
         // assert
-        expect(WSS[gameId].gameBoard).toStrictEqual([
+        expect(gameData.board).toStrictEqual([
           ['B', 0, 0],
           [0, 0, 0],
           [0, 0, 0]
@@ -173,7 +176,8 @@ describe('handeMoveRequest', () => {
 
       it('if there is 1 removed stone', () => {
         // setup
-        WSS[gameId].gameBoard = [
+        const { wsServer, gameData } = WSS[gameId];
+        gameData.board = [
           [0, 0, 0],
           ['B', 'W', 'B'],
           [0, 'B', 0]
@@ -188,13 +192,13 @@ describe('handeMoveRequest', () => {
         const wsData = { row: 0, col: 1 };
 
         const clientSend = vi.fn();
-        WSS[gameId].wsServer.clients.push({ send: clientSend });
+        wsServer.clients.push({ send: clientSend });
 
         // action
         handleMoveRequest({ wsData, ws, gameId });
 
         // assert
-        expect(WSS[gameId].gameBoard).toStrictEqual([
+        expect(gameData.board).toStrictEqual([
           [0, 'B', 0],
           ['B', 0, 'B'],
           [0, 'B', 0]
@@ -203,7 +207,8 @@ describe('handeMoveRequest', () => {
 
       it('if there are 3 removed stones', () => {
         // setup
-        WSS[gameId].gameBoard = [
+        const { wsServer, gameData } = WSS[gameId];
+        gameData.board = [
           ['B', 0, 'B'],
           ['W', 0, 'W'],
           ['B', 'W', 'B'],
@@ -218,13 +223,13 @@ describe('handeMoveRequest', () => {
         const wsData = { row: 1, col: 1 };
 
         const clientSend = vi.fn();
-        WSS[gameId].wsServer.clients.push({ send: clientSend });
+        wsServer.clients.push({ send: clientSend });
 
         // action
         handleMoveRequest({ wsData, ws, gameId });
 
         // assert
-        expect(WSS[gameId].gameBoard).toStrictEqual([
+        expect(gameData.board).toStrictEqual([
           ['B', 0, 'B'],
           [0, 'B', 0],
           ['B', 0, 'B'],
@@ -234,10 +239,11 @@ describe('handeMoveRequest', () => {
 
       it('if removing stone on double digit spot', () => {
         // setup
-        WSS[gameId].gameBoard = Array.from({ length: 19 }, () => Array(19).fill(0));
+        const { wsServer, gameData } = WSS[gameId];
+        gameData.board = Array.from({ length: 19 }, () => Array(19).fill(0));
 
-        WSS[gameId].gameBoard[17][0] = 'B';
-        WSS[gameId].gameBoard[18][0] = 'W';
+        gameData.board [17][0] = 'B';
+        gameData.board [18][0] = 'W';
 
         vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
         vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => ['18,0']);
@@ -247,15 +253,15 @@ describe('handeMoveRequest', () => {
 
         const clientSend = vi.fn();
 
-        WSS[gameId].wsServer.clients.push({ send: clientSend });
+        wsServer.clients.push({ send: clientSend });
 
         // action
         handleMoveRequest({ wsData, ws, gameId });
 
         // assert
-        expect(WSS[gameId].gameBoard[17][0]).toEqual('B');
-        expect(WSS[gameId].gameBoard[18][0]).toEqual(0);
-        expect(WSS[gameId].gameBoard[18][1]).toEqual('B');
+        expect(gameData.board [17][0]).toEqual('B');
+        expect(gameData.board [18][0]).toEqual(0);
+        expect(gameData.board [18][1]).toEqual('B');
       });
     });
 
@@ -293,7 +299,8 @@ describe('handeMoveRequest', () => {
 
       it('if there is 1 removed stone', () => {
         // setup
-        WSS[gameId].gameBoard = [
+        const { wsServer, gameData } = WSS[gameId];
+        gameData.board = [
           [0, 0, 0],
           ['B', 'W', 'B'],
           [0, 'B', 0]
@@ -312,7 +319,7 @@ describe('handeMoveRequest', () => {
         const clientSend = vi.fn(msg => {
           receive.msg = msg;
         });
-        WSS[gameId].wsServer.clients.push({ send: clientSend });
+        wsServer.clients.push({ send: clientSend });
 
         // action
         handleMoveRequest({ wsData, ws, gameId });
@@ -376,7 +383,8 @@ describe('handeMoveRequest', () => {
 
   it('if it wants to place a stone on a stone', () => {
     // setup
-    WSS[gameId].gameBoard = [
+    const { wsServer, gameData } = WSS[gameId];
+    gameData.board = [
       [0, 'B'],
       [0, 0]
     ];
@@ -389,7 +397,7 @@ describe('handeMoveRequest', () => {
 
     const clientSend = vi.fn();
 
-    WSS[gameId].wsServer.clients.push({ send: clientSend });
+    wsServer.clients.push({ send: clientSend });
 
     // action
     const result = handleMoveRequest({ wsData, ws, gameId });
@@ -400,14 +408,15 @@ describe('handeMoveRequest', () => {
 
   it('if it breaks the ko rule', () => {
     // setup
-    WSS[gameId].gameBoard = [
+    const { wsServer, gameData } = WSS[gameId];
+    gameData.board = [
       [0, 'W', 0],
       ['W', 0, 'W'],
       ['B', 'W', 'B'],
       [0, 'B', 0]
     ];
     // previously removed: 1,1
-    WSS[gameId].gameData.koRule = `${1},${1}`;
+    gameData.koRule = `${1},${1}`;
 
     vi.spyOn(utility, 'isSuicide').mockImplementation(() => false);
     vi.spyOn(removedStones, 'getRemovedStones').mockImplementation(() => []);
@@ -417,7 +426,7 @@ describe('handeMoveRequest', () => {
 
     const clientSend = vi.fn();
 
-    WSS[gameId].wsServer.clients.push({ send: clientSend });
+    wsServer.clients.push({ send: clientSend });
 
     // action
     const result = handleMoveRequest({ wsData, ws, gameId });

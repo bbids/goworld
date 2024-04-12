@@ -19,9 +19,9 @@ describe.concurrent('api/play integration', async () => {
     });
 
     it('can get at least one correct game', async () => {
-      await request(app).get('/api/play/create_game');
-      await request(app).get('/api/play/create_game');
-      await request(app).get('/api/play/create_game');
+      await request(app).post('/api/play/create_game');
+      await request(app).post('/api/play/create_game');
+      await request(app).post('/api/play/create_game');
       const response = await request(app).get('/api/play');
       expect(response.status).toBe(200);
       expect(response.header['content-type']).toMatch(/json/);
@@ -34,9 +34,9 @@ describe.concurrent('api/play integration', async () => {
     });
   });
 
-  describe('GET /create_game', async () => {
+  describe('POST /create_game', async () => {
     it('can create a valid game', async () => {
-      const response = await request(app).get('/api/play/create_game');
+      const response = await request(app).post('/api/play/create_game');
       expect(response.status).toBe(201);
       expect(response.header['content-type']).toMatch(/json/);
       expect(response.body).toHaveProperty('gameId');

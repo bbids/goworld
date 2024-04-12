@@ -15,16 +15,26 @@ const getGamesData = () => {
     });
 };
 
-const createGame = () => {
-  return fetch(`${baseUrl}/create_game`)
-    .then(response => {
-      if (!response.ok)
-        throw new Error('Game creation service is unavailable.');
-      return response.json();
+const createGame = (boardSize = 19) => {
+  return (
+    fetch(`${baseUrl}/create_game`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        boardSize
+      })
     })
-    .catch(error => {
-      logger.devError(error);
-    });
+      .then(response => {
+        if (!response.ok)
+          throw new Error('Game creation service is unavailable.');
+        return response.json();
+      })
+      .catch(error => {
+        logger.devError(error);
+      })
+  );
 };
 
 const checkGameExists = (gameId) => {
