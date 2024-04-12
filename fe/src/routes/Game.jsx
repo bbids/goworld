@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { connection } from '../webSocket/connection';
 import Board from '../components/Board';
 import PassBtn from '../components/PassBtn';
+import ChatBox from '../components/ChatBox';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -85,11 +86,14 @@ const Game = () => {
 
       <Board game={game}/>
 
-      <p>We need a chat as well ..</p>
-      <button onClick={sayHi}>sayHi</button>
-      <PassBtn />
-
-      <p>We can now see status: {status}</p>
+      <div id='game_sidebar'>
+        <div id='game_foot'>
+          <button onClick={sayHi}>sayHi</button>
+          <PassBtn />
+          <p>We can now see status: {status}</p>
+        </div>
+        <ChatBox />
+      </div>
     </div>
   );
 };

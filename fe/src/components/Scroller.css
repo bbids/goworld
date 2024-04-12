@@ -1,0 +1,35 @@
+#scroller {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/*
+
+TLDR: CSS is a scam, use javascript instead (:
+
+#scroller * {
+  overflow-anchor: none;
+}
+
+#scroller *:first-child {
+  overflow-anchor: auto;
+  height: 10px;
+  background-color: blueviolet;
+}
+
+#scroller *:nth-child(1) {
+  overflow-anchor: auto;
+  height: 10px;
+  background-color: blueviolet;
+}
+*/
+
+/*
+#anchor {
+  overflow-anchor: auto;
+  height: 10px;
+  background-color: blueviolet;
+}
+*/

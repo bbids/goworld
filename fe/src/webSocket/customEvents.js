@@ -5,6 +5,20 @@ const getEventListeners = () => {
   // condition: custom events must occur at GAME_START or later!
   return [
     {
+      listenerName: 'messages',
+      eventName: 'MESSAGE',
+      // todo: fix arguments, use object (like props) instead
+      callback: (websocket, wsData) => {
+        console.log(wsData);
+        const msgEvent= new CustomEvent('msgEvent', {
+          detail: {
+            message: wsData.message
+          }
+        });
+        document.dispatchEvent(msgEvent);
+      }
+    },
+    {
       listenerName: 'heartbeat',
       eventName: 'GAME_START',
       callback: (websocket) => {

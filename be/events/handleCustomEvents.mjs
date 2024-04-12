@@ -1,5 +1,6 @@
 import { WSS } from '../utils/cache.mjs';
 import logger from '../utils/logger.mjs';
+import handleMessage from './handlerImplementations/handleMessage.mjs';
 import handleMoveRequest from './handlerImplementations/handleMoveRequest.mjs';
 import handlePass from './handlerImplementations/handlePass.mjs';
 
@@ -35,6 +36,7 @@ const handlers = {
   'GAME_READY': handleGameReady,
   'MOVE_REQUEST': handleMoveRequest,
   'PASS': handlePass,
+  'MESSAGE': handleMessage
 };
 
 const handleCustomEvent = ({ wsData, ws, gameId }) => {

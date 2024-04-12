@@ -1,5 +1,5 @@
 import { it, expect, describe, vi } from 'vitest';
-import { connection } from './connection';
+import { connection } from '../webSocket/connection';
 import gameService from '../services/game';
 
 

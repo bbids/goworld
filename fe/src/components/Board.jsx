@@ -182,9 +182,9 @@ const Board = ({ game }) => {
   }, []);
 
   return (
-    <>
-      <canvas id='board' data-testid='board' ref={canvasRef} width={576} height={576} />
-    </>
+    <div id='board'>
+      <canvas data-testid='board' ref={canvasRef} width={576} height={576} />
+    </div>
   );
 };
 
