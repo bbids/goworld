@@ -27,11 +27,11 @@ const Game = () => {
     setStatus(game.status);
   }, [game.status]);
 
-  // Mutation
+  // Game data mutation
   useEffect(() => {
     const callback = (event) => {
       const changes = event.detail.mutation;
-      setGame(pgame => ({...pgame, ...changes }));
+      setGame(pgame => ({ ...pgame, ...changes }));
     };
 
     document.addEventListener('mutation', callback);
@@ -44,7 +44,6 @@ const Game = () => {
   // initialize after connection
   useEffect(() => {
     const initialise = () => {
-      document.removeEventListener('wsConnection', initialise);
       setUser({ type: 'SET_USERSTATUS', payload: 'GAME' });
       connection.send(JSON.stringify({
         type: 'EVENT',
@@ -63,7 +62,8 @@ const Game = () => {
   // dispatch trigger event : starting point
   useEffect(() => {
     if (user.userStatus === 'GAME'
-      || user.userStatus === 'CONNECTING')
+      || user.userStatus === 'CONNECTING'
+      || connection.dispatched)
       return;
 
     setUser({ type: 'SET_USERSTATUS', payload: 'CONNECTING' });
@@ -71,13 +71,14 @@ const Game = () => {
     if (!connection.isOpen()) {
       connection.establish(gameId);
     }
+
     connection.dispatchEvent();
   }, [user, setUser, gameId]);
 
   return (
     <div id='game' className='content'>
 
-      <Board game={game}/>
+      <Board game={game} />
 
       <div id='game_sidebar'>
         <div id='game_foot'>

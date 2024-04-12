@@ -4,6 +4,7 @@ import { dispatchConnection } from './gameWebSocketUtils';
 
 const connection = {
   websocket: null,
+  dispatched: false,
 
   establish(gameId) {
     if (this.websocket) {
@@ -23,6 +24,7 @@ const connection = {
     if (this.websocket) {
       this.websocket.raw.close();
       this.websocket = null;
+      this.dispatched = false;
 
       const resetEvent = new CustomEvent('resetEvent');
       document.dispatchEvent(resetEvent);
@@ -30,6 +32,12 @@ const connection = {
   },
 
   dispatchEvent() {
+    if (this.dispatched)
+      return;
+
+    this.dispatched = true;
+
+
     if (this.isOpen()) {
       dispatchConnection(this.websocket);
     } else {

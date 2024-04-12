@@ -6,8 +6,6 @@ import router from './router';
 
 import './main.css';
 
-import './hooks/EventEmitter';
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
