@@ -6,35 +6,50 @@
  * @param {*} canvasRef
  * @returns
  */
-const getRowAndCol = (event, canvasRef, cellSize = 32) => {
+const getRowAndCol = (event, canvasRef, cellSize, boardEdgeSize) => {
   const canvas = canvasRef.current;
 
   const rect = canvas.getBoundingClientRect();
   const click_X = event.clientX - rect.left;
   const click_Y = event.clientY - rect.top;
 
-  const col = Math.floor((click_X + cellSize / 2) / cellSize);
-  const row = Math.floor((click_Y + cellSize / 2) / cellSize);
+  console.log('clicks', click_X, click_Y);
+
+  if (boardEdgeSize > cellSize / 2) {
+    console.log('testing', rect.bottom, rect.right);
+    if (click_X < boardEdgeSize - cellSize / 2
+      || click_X > (rect.right - rect.left - boardEdgeSize + cellSize / 2))
+      return false;
+
+    if (click_Y < boardEdgeSize - cellSize / 2
+      || click_Y > (rect.bottom - rect.top - boardEdgeSize + cellSize / 2))
+      return false;
+  }
+  const col = Math.floor((click_X + cellSize / 2 - boardEdgeSize) / cellSize);
+  const row = Math.floor((click_Y + cellSize / 2 - boardEdgeSize) / cellSize);
 
   return { row, col };
 };
 
-const drawGrid = ({ canvasRef, boardSize, cellSize }) => {
+const drawGrid = ({ canvasRef, boardSize, cellSize, edgeSize }) => {
   const canvas = canvasRef.current;
   const ctx = canvas.getContext('2d');
 
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 2;
+  // vertical
   for (let i = 0; i < boardSize; i++) {
     ctx.beginPath();
-    ctx.moveTo(i * cellSize, 0);
-    ctx.lineTo(i * cellSize, cellSize * boardSize);
+    ctx.moveTo(i * cellSize + edgeSize, edgeSize);
+    ctx.lineTo(i * cellSize + edgeSize, cellSize * (boardSize - 1) + edgeSize);
     ctx.stroke();
     ctx.closePath();
+  }
 
+  for (let i = 0; i < boardSize; i++) {
     ctx.beginPath();
-    ctx.moveTo(0, i * cellSize);
-    ctx.lineTo(cellSize * boardSize, i * cellSize);
+    ctx.moveTo(edgeSize, i * cellSize + edgeSize);
+    ctx.lineTo(cellSize * (boardSize - 1) + edgeSize, i * cellSize + edgeSize);
     ctx.stroke();
     ctx.closePath();
   }

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import bstone from '../assets/bstone.png';
 import wstone from '../assets/wstone.png';
@@ -34,46 +34,17 @@ const Board = ({ game }) => {
   const canvasRef = useRef(null);
   const [dimension, setDimension] = useState();
   const [cellSize, setCellSize] = useState();
+  const [edgeSize, setBoardEdgeSize] = useState();
+  const [stoneImages, setStoneImages] = useState({});
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
+  const edgeFactor = useMemo(() => {
     if (!game.boardSize) return;
-    setDimension(canvasRef.current.height);
-    setCellSize(canvasRef.current.height / (game.boardSize - 1));
+    return 1 / game.boardSize;
   }, [game.boardSize]);
 
-  useEffect(() => {
-    function handleResize() {
-      console.log('resizing', canvasRef.current, game.boardSize);
-      console.log('window size', window.innerWidth, window.innerHeight);
-      if (!canvasRef.current) return;
-
-      if (window.innerWidth  < window.innerHeight) {
-        // temporary value, 50 for margin, maybe use div width or something
-        canvasRef.current.width = window.innerWidth - 50;
-        canvasRef.current.height = window.innerWidth - 50;
-        setDimension(window.innerWidth - 50);
-        setCellSize((window.innerWidth - 50)/ (game.boardSize - 1));
-      }
-      else {
-        if (canvasRef.current.height !== 576) {
-          canvasRef.current.height = 576;
-          canvasRef.current.width = 576;
-          setDimension(576);
-          setCellSize(576 / (game.boardSize - 1));
-        }
-      }
-    }
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [game.boardSize]);
+  // todo: async loading board?
 
   // Preload stone images
-  const [stoneImages, setStoneImages] = useState({});
   useEffect(() => {
     const blackStoneImg = new Image();
     blackStoneImg.src = bstone;
@@ -89,6 +60,53 @@ const Board = ({ game }) => {
   }, []);
 
 
+  // some board properties
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (!game.boardSize) return;
+
+    const newEdgeSize = edgeFactor * canvasRef.current.height;
+    const newCellSize = getCellSize(canvasRef.current.height, newEdgeSize, game.boardSize);
+    setDimension(canvasRef.current.height);
+    setCellSize(newCellSize);
+    setBoardEdgeSize(newEdgeSize);
+  }, [game.boardSize, edgeFactor]);
+
+
+  // resize / responsiveness
+  useEffect(() => {
+    function handleResize() {
+      if (!canvasRef.current) return;
+
+      let newHeight, newWidth;
+      // TBD
+      if (window.innerWidth < window.innerHeight) {
+        newHeight = newWidth = window.innerWidth;
+      } else if (canvasRef.current.height !== 576){
+        newHeight = newWidth = 576;
+      } else {
+        return;
+      }
+
+      canvasRef.current.width = newWidth;
+      canvasRef.current.height = newHeight;
+
+      const newEdgeSize = edgeFactor * newHeight;
+      const newCellSize = getCellSize(canvasRef.current.height, newEdgeSize, game.boardSize);
+
+      setDimension(newWidth);
+      setCellSize(newCellSize);
+      setBoardEdgeSize(newEdgeSize);
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [game.boardSize, edgeFactor]);
+
+
   // Move request
   useEffect(() => {
     if (user.userStatus !== 'GAME')
@@ -99,7 +117,10 @@ const Board = ({ game }) => {
     const canvas = canvasRef.current;
 
     const moveRequest = (event) => {
-      const { row, col } = getRowAndCol(event, canvasRef, cellSize);
+      const result = getRowAndCol(event, canvasRef, cellSize, edgeSize);
+      if (!result) return;
+
+      const { row, col } = result;
       connection.send(JSON.stringify({
         type: 'EVENT',
         eventName: 'MOVE_REQUEST',
@@ -113,7 +134,7 @@ const Board = ({ game }) => {
     return () => {
       canvas.removeEventListener('click', moveRequest);
     };
-  }, [user, cellSize]);
+  }, [user, cellSize, edgeSize]);
 
 
   // Draw stone
@@ -124,8 +145,8 @@ const Board = ({ game }) => {
       const { row, col, color } = event.detail;
       const ctx = canvasRef.current.getContext('2d');
 
-      const x = col * cellSize;
-      const y = row * cellSize;
+      const x = col * cellSize + edgeSize;
+      const y = row * cellSize + edgeSize;
 
       let stoneImg;
       if (color === 'BLACK')
@@ -143,12 +164,12 @@ const Board = ({ game }) => {
     return () => {
       document.removeEventListener('DRAW_STONE', drawStone);
     };
-  }, [stoneImages, cellSize]);
+  }, [stoneImages, cellSize, edgeSize]);
 
 
   // render the board
   useEffect(() => {
-    if (!game.board) return;
+    if (!game.board) return; // todo: check for gameData is 'received' instead
     if (!canvasRef.current) return;
     if (!cellSize) return;
 
@@ -159,6 +180,7 @@ const Board = ({ game }) => {
     drawGrid({
       canvasRef,
       boardSize: game.boardSize,
+      edgeSize,
       cellSize
     });
 
@@ -176,7 +198,12 @@ const Board = ({ game }) => {
         }
       }
     }
-  }, [game.board, game.boardSize, cellSize, dimension]);
+  }, [game.board, game.boardSize, cellSize, dimension, edgeSize]);
+
+
+  function getCellSize(height, edgeSize, boardSize) {
+    return (height - 2 * edgeSize) / (boardSize - 1);
+  }
 
   return (
     <div id='board'>

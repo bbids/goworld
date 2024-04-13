@@ -25,7 +25,6 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
-  margin: 0 25px;
 }
 
 #board, #game_sidebar {
