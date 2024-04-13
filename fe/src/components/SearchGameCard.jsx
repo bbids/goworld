@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 import gameService from '../services/game.js';
 import logger from '../utils/logger.js';
@@ -13,22 +13,23 @@ import { connection } from '../webSocket/connection.js';
  */
 const SearchGameCard = () => {
   const { user, setUser } = useContext(UserContext);
+  const [selectedBoardSize, setSelectedBoardSize] = useState(19);
   const navigate = useNavigate();
 
   const startSearching = async (event) => {
     event.preventDefault();
 
     try {
-      const boardSize = prompt('game size?');
-      console.log(boardSize);
-      const gameData = await gameService.createGame(Number(boardSize));
+      const gameData = await gameService.createGame(selectedBoardSize);
 
       connection.establish(gameData.gameId);
 
       connection.websocket.raw.addEventListener('open', () => {
-        setUser({ type: 'START_QUEUE', payload: {
-          gameId: gameData.gameId
-        }});
+        setUser({
+          type: 'START_QUEUE', payload: {
+            gameId: gameData.gameId
+          }
+        });
 
         connection.addCustomOnceEventListener('GAME_READY', () => {
           setUser({ type: 'SET_USERSTATUS', payload: 'LOADING' });
@@ -47,6 +48,11 @@ const SearchGameCard = () => {
   };
 
 
+  const boardSizes = Array.from({ length: 19 }, (_, ind) => ind + 1);
+  const handleBoardSizeChange = (event) => {
+    setSelectedBoardSize(Number(event.target.value));
+  };
+
   return (
     <>
       {user.userStatus === 'QUEUE' ?
@@ -56,6 +62,18 @@ const SearchGameCard = () => {
         </>
         :
         <form onSubmit={startSearching}>
+          <p>
+            <label htmlFor='selectedBoardSize'>Board size: </label>
+            <select
+              id="selectedBoardSize"
+              value={selectedBoardSize}
+              onChange={handleBoardSizeChange}
+            >
+              {boardSizes.map(val => {
+                return <option key={val}>{val}</option>;
+              })}
+            </select>
+          </p>
           <button type='submit'>Play</button>
         </form>
       }
