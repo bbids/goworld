@@ -46,7 +46,7 @@ const drawBackgroundDefault = (canvasRef) => {
 
   ctx.beginPath();
   ctx.fillStyle = 'rgb(139, 69, 19)';
-  ctx.fillRect(0, 0, 608, 608);
+  ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
   ctx.closePath();
 };
 

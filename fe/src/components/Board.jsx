@@ -32,7 +32,45 @@ import { connection } from '../webSocket/connection';
 const Board = ({ game }) => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef(null);
-  const cellSize = canvasRef.current?.width / (game.boardSize - 1);
+  const [dimension, setDimension] = useState();
+  const [cellSize, setCellSize] = useState();
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (!game.boardSize) return;
+    setDimension(canvasRef.current.height);
+    setCellSize(canvasRef.current.height / (game.boardSize - 1));
+  }, [game.boardSize]);
+
+  useEffect(() => {
+    function handleResize() {
+      console.log('resizing', canvasRef.current, game.boardSize);
+      console.log('window size', window.innerWidth, window.innerHeight);
+      if (!canvasRef.current) return;
+
+      if (window.innerWidth  < window.innerHeight) {
+        // temporary value, 50 for margin, maybe use div width or something
+        canvasRef.current.width = window.innerWidth - 50;
+        canvasRef.current.height = window.innerWidth - 50;
+        setDimension(window.innerWidth - 50);
+        setCellSize((window.innerWidth - 50)/ (game.boardSize - 1));
+      }
+      else {
+        if (canvasRef.current.height !== 576) {
+          canvasRef.current.height = 576;
+          canvasRef.current.width = 576;
+          setDimension(576);
+          setCellSize(576 / (game.boardSize - 1));
+        }
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [game.boardSize]);
 
   // Preload stone images
   const [stoneImages, setStoneImages] = useState({});
@@ -112,6 +150,7 @@ const Board = ({ game }) => {
   useEffect(() => {
     if (!game.board) return;
     if (!canvasRef.current) return;
+    if (!cellSize) return;
 
     const ctx = canvasRef.current.getContext('2d');
     ctx.reset();
@@ -137,7 +176,7 @@ const Board = ({ game }) => {
         }
       }
     }
-  }, [game.board, game.boardSize, cellSize]);
+  }, [game.board, game.boardSize, cellSize, dimension]);
 
   return (
     <div id='board'>
