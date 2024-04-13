@@ -48,7 +48,7 @@ const SearchGameCard = () => {
   };
 
 
-  const boardSizes = Array.from({ length: 19 }, (_, ind) => ind + 1);
+  const boardSizes = [9, 13, 19];
   const handleBoardSizeChange = (event) => {
     setSelectedBoardSize(Number(event.target.value));
   };
