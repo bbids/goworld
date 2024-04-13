@@ -24,7 +24,7 @@ describe('WebSocket Server Upgrade Handler', () => {
   });
 
   it('1 Client can connect to a created game', async () => {
-    const response = await request(baseUrl).get('/api/play/create_game');
+    const response = await request(baseUrl).post('/api/play/create_game');
     const { gameId } = response.body;
 
     const connectedPromise = new Promise((resolve, reject) => {
@@ -45,7 +45,7 @@ describe('WebSocket Server Upgrade Handler', () => {
   });
 
   it('2 clients can connect and receive GAME_READY custom event', async () => {
-    const response = await request(baseUrl).get('/api/play/create_game');
+    const response = await request(baseUrl).post('/api/play/create_game');
     const { gameId } = response.body;
 
     const connectedPromises = Promise.all([
@@ -76,7 +76,7 @@ describe('WebSocket Server Upgrade Handler', () => {
   });
 
   it('2 clients can send GAME_READY to receive GAME_START', async () => {
-    const response = await request(baseUrl).get('/api/play/create_game');
+    const response = await request(baseUrl).post('/api/play/create_game');
     const { gameId } = response.body;
 
     const client = (resolve) => {
@@ -106,7 +106,7 @@ describe('WebSocket Server Upgrade Handler', () => {
   });
 
   it('3rd and onwards clients receives spectator event', async () => {
-    const response = await request(baseUrl).get('/api/play/create_game');
+    const response = await request(baseUrl).post('/api/play/create_game');
     const { gameId } = response.body;
 
     const client = (resolve) => {
