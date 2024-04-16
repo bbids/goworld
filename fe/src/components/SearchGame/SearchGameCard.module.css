@@ -4,7 +4,6 @@
 }
 
 .searchCard > * {
-  height: 6em;
   row-gap: 1em;
   display: flex;
   flex-direction: column;
@@ -14,11 +13,11 @@
 }
 
 .searchForm {
-  font-family: Arial;
+  height: 5em;
 }
 
 .searching {
-  font-family: Arial;
+  height: 9em;
 }
 
 .searching p {

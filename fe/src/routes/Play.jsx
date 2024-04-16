@@ -1,4 +1,4 @@
-import OpenGamesList from '../components/OpenGamesList';
+import OpenGamesList from '../components/OpenGamesList/OpenGamesList';
 import SearchGameCard from '../components/SearchGame/SearchGameCard';
 import { useContext, useEffect, useState } from 'react';
 import logger from '../utils/logger';

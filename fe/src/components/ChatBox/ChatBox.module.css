@@ -2,8 +2,9 @@
   height: 500px;
   max-width: 300px;
   border: 1px solid gray;
-  background-color: blanchedalmond;
+  background-color: rgb(200, 200, 200);
   position: relative;
+  color: black;
 
   grid-row: 2 / 3;
   grid-column: 1 / -1;
@@ -24,7 +25,10 @@
 
 .message {
   margin: 10px 3px;
-  background-color: rgb(230, 230, 173);
+  background-color: rgb(182, 182, 165);
+  width: fit-content;
+  padding: 1em;
+  border-radius: 0.5em;
 }
 
 .sendWrapper {

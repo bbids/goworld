@@ -1,20 +1,31 @@
 .navLinks {
+  height: 100%;
   grid-column: 2 / 3;
 }
 
 .container {
   height: 100%;
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
+  row-gap: 3em;
+  width: 5em;
+}
+
+.item:hover {
+  background-color: rgba(108, 43, 23, 0.202);
 }
 
 .item {
-  padding: 10px;
+  height: 100%;
+  margin-right: 1em;
   list-style-type: none;
-  color: black;
-  font-size: 5vw;
+  font-size: 1.5em;
+  width: 3em;
+
+  display: flex;
+  align-items: center;
 }
+
 
 .link {
   text-decoration: none;

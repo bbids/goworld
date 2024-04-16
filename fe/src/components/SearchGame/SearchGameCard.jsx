@@ -54,6 +54,9 @@ const SearchGameCard = () => {
       {user.userStatus === 'QUEUE' ?
         <div className={searching}>
           <p>Attempting to join game</p>
+          <p>ID: {user.gameId}</p>
+          { /* <a href={`http://localhost:5173/game/${user.gameId}`}>Link</a> */ }
+          <button className={button}>Copy</button>
           <button
             onClick={stopSearching}
             className={button}
