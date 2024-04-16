@@ -8,9 +8,21 @@ const getEventListeners = () => {
       listenerName: 'messages',
       eventName: 'MESSAGE',
       callback: ({ wsData }) => {
+
+        const user = wsData.user;
+
+        let playerId = -1;
+        if (user !== 'spectator' && user !== 'server') {
+          playerId = Number(user.substring(user.indexOf(',') + 1)); // either 0 or 1
+        } else if (user === 'server') {
+          playerId = 2; // temp.
+        }
+
+
         const msgEvent = new CustomEvent('msgEvent', {
           detail: {
-            message: wsData.message
+            message: wsData.message,
+            playerId
           }
         });
         document.dispatchEvent(msgEvent);

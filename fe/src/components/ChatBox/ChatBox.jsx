@@ -4,7 +4,7 @@ import AutoScrollBottom from '../AutoScrollBottom/AutoScrollBottom';
 import logger from '../../utils/logger';
 
 import {
-  chatBox, message, sendWrapper, sendForm
+  chatBox, message, sendWrapper, sendForm, left, right
 } from './ChatBox.module.css';
 
 const ChatBox = () => {
@@ -13,8 +13,18 @@ const ChatBox = () => {
 
   useEffect(() => {
     const updateMessages = (event) => {
-      const msg = event.detail.message;
-      setMessages(pmessages => ([msg, ...pmessages]));
+      const { message, playerId} = event.detail;
+
+      let className = null;
+      if (playerId === 0) {
+        className = left;
+      } else if (playerId === 1){
+        className = right;
+      }
+
+      const newMessageWrapper = { message, className};
+
+      setMessages(pmessages => ([newMessageWrapper, ...pmessages]));
       logger.dev('updated messages');
     };
 
@@ -43,8 +53,11 @@ const ChatBox = () => {
   return (
     <div id='chatbox' className={chatBox}>
       <AutoScrollBottom>
-        {messages.map((msg, ind) => {
-          return <p key={ind} className={message}>{msg}</p>;
+        {messages.map((msgWrapper, ind) => {
+          return <p
+            key={ind}
+            className={`${message} ${msgWrapper.className ?? ''}`}
+          >{msgWrapper.message}</p>;
         })}
       </AutoScrollBottom>
 
