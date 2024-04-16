@@ -1,0 +1,39 @@
+.chatBox {
+  height: 500px;
+  max-width: 300px;
+  border: 1px solid gray;
+  background-color: blanchedalmond;
+  position: relative;
+
+  grid-row: 2 / 3;
+  grid-column: 1 / -1;
+}
+
+@media screen and (min-width: 1024px) {
+  #chatbox {
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
+  }
+}
+
+.scroller {
+  height: 100%;
+  max-height: 551px;
+  padding-bottom: 15%;
+}
+
+.message {
+  margin: 10px 3px;
+  background-color: rgb(230, 230, 173);
+}
+
+.sendWrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.sendForm {
+  display: flex;
+  flex-direction: column;
+}

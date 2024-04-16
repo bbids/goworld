@@ -1,5 +1,4 @@
-#scroller {
-  height: 100%;
+.reverse {
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;

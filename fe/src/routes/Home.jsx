@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext';
-import SideBar from '../components/SideBar';
+import SideBar from '../components/SideBar/SideBar';
 import { connection } from '../webSocket/connection';
 
 /**

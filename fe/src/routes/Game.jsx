@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { connection } from '../webSocket/connection';
 import Board from '../components/Board';
 import PassBtn from '../components/PassBtn';
-import ChatBox from '../components/ChatBox';
+import ChatBox from '../components/ChatBox/ChatBox';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to

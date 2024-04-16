@@ -1,4 +1,6 @@
-import './AutoScrollBottom.css';
+import { reverse } from './AutoScrollBottom.module.css';
+
+import chatbox from '../ChatBox/ChatBox.module.css';
 
 /*
 alternative: https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/
@@ -7,7 +9,7 @@ alternative: https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-b
 
 const AutoScrollBottom = ({ children }) => {
   return (
-    <div id='scroller'>
+    <div className={`${reverse} ${chatbox.scroller}`}>
       {children}
     </div>
   );

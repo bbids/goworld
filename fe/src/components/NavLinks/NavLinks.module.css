@@ -1,0 +1,22 @@
+.navLinks {
+  grid-column: 2 / 3;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.item {
+  padding: 10px;
+  list-style-type: none;
+  color: black;
+  font-size: 5vw;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+}

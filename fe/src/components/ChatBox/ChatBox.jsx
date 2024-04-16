@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
-import { connection } from '../webSocket/connection';
-import AutoScrollBottom from './AutoScrollBottom';
+import { connection } from '../../webSocket/connection';
+import AutoScrollBottom from '../AutoScrollBottom/AutoScrollBottom';
+import logger from '../../utils/logger';
+
+import {
+  chatBox, message, sendWrapper, sendForm
+} from './ChatBox.module.css';
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
@@ -10,7 +15,7 @@ const ChatBox = () => {
     const updateMessages = (event) => {
       const msg = event.detail.message;
       setMessages(pmessages => ([msg, ...pmessages]));
-      console.log('updated messages');
+      logger.dev('updated messages');
     };
 
     document.addEventListener('msgEvent', updateMessages);
@@ -36,15 +41,15 @@ const ChatBox = () => {
 
 
   return (
-    <div id='chatbox'>
+    <div id='chatbox' className={chatBox}>
       <AutoScrollBottom>
         {messages.map((msg, ind) => {
-          return <p key={ind}>{msg}</p>;
+          return <p key={ind} className={message}>{msg}</p>;
         })}
       </AutoScrollBottom>
 
-      <div id='chatbox_send'>
-        <form onSubmit={sendMessage}>
+      <div id='chatbox_send' className={sendWrapper}>
+        <form onSubmit={sendMessage} className={sendForm}>
           <input
             type="text"
             onChange={updateInput}
