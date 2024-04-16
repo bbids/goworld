@@ -21,13 +21,17 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
+        path: '/',
+        element: <div className='content'>Enjoy</div>
+      },
+      {
         path: 'play',
         element: <Play />,
       },
       {
         path: '/game/:gameId',
         element: <Game />,
-        loader: gameValidLoader
+        loader: gameValidLoader // todo: find alternative solution
       },
     ]
   },
