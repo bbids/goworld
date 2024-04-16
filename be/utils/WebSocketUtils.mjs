@@ -1,4 +1,4 @@
-import { WebSocketServer} from 'ws';
+import { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import { WSS } from './cache.mjs';
 import logger from './logger.mjs';
@@ -25,14 +25,28 @@ const createGameWebSocket = (gameId, boardSize = 19) => {
 
     ws.on('close', () => {
       logger.dev(`Client disconnected from game ${gameId}`);
-      const { gameData, playersUUID } = WSS[gameId];
+      const { gameData, playersUUID, wsServer } = WSS[gameId];
 
       gameData.count -= 1;
 
-      WSS[gameId].playersUUID = playersUUID.filter(uuid => ws.uuid !== uuid);
-      // todo: if game hasn't started yet, disconnect opponent as well
+      console.log(playersUUID, ws.uuid);
 
       if (gameData.count <= 0) cleanup(gameId);
+
+      WSS[gameId].playersUUID = playersUUID.filter(uuid => ws.uuid !== uuid);
+
+
+      if (WSS[gameId].playersUUID.length === 1) {
+        wsServer.clients.forEach(client => {
+          console.log('sent');
+          client.send(JSON.stringify({
+            type: 'EVENT',
+            eventName: 'MESSAGE',
+            message: 'opponent disconnected',
+            user: 'server'
+          }));
+        });
+      }
     });
 
     ws.on('error', (err) => {
