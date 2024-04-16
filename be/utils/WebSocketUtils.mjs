@@ -31,7 +31,10 @@ const createGameWebSocket = (gameId, boardSize = 19) => {
 
       console.log(playersUUID, ws.uuid);
 
-      if (gameData.count <= 0) cleanup(gameId);
+      if (gameData.count <= 0) {
+        cleanup(gameId);
+        return;
+      }
 
       WSS[gameId].playersUUID = playersUUID.filter(uuid => ws.uuid !== uuid);
 
@@ -43,7 +46,7 @@ const createGameWebSocket = (gameId, boardSize = 19) => {
             type: 'EVENT',
             eventName: 'MESSAGE',
             message: 'opponent disconnected',
-            user: 'server'
+            user: 'server',
           }));
         });
       }
