@@ -1,9 +1,9 @@
 import { fireEvent, render, waitFor, cleanup } from '@testing-library/react';
 
-import { UserContext } from '../contexts/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import SearchGameCard from './SearchGameCard';
-import * as GameWebSocket from '../webSocket/GameWebSocket';
-import gameService from '../services/game';
+import * as GameWebSocket from '../../webSocket/GameWebSocket';
+import gameService from '../../services/game';
 
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { describe, it, expect, vi, afterEach } from 'vitest';

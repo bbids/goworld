@@ -1,5 +1,5 @@
 import OpenGamesList from '../components/OpenGamesList';
-import SearchGameCard from '../components/SearchGameCard';
+import SearchGameCard from '../components/SearchGame/SearchGameCard';
 import { useContext, useEffect, useState } from 'react';
 import logger from '../utils/logger';
 import gameService from '../services/game';

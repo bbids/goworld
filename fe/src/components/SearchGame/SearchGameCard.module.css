@@ -1,0 +1,33 @@
+.searchCard {
+  display: flex;
+  justify-content: center;
+}
+
+.searchCard > * {
+  height: 6em;
+  row-gap: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
+  position: relative;
+}
+
+.searchForm {
+  font-family: Arial;
+}
+
+.searching {
+  font-family: Arial;
+}
+
+.searching p {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.button {
+  width: 5em;
+  position: absolute;
+  bottom: 0;
+}
