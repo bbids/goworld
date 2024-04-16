@@ -13,10 +13,8 @@ const getRowAndCol = (event, canvasRef, cellSize, boardEdgeSize) => {
   const click_X = event.clientX - rect.left;
   const click_Y = event.clientY - rect.top;
 
-  console.log('clicks', click_X, click_Y);
 
   if (boardEdgeSize > cellSize / 2) {
-    console.log('testing', rect.bottom, rect.right);
     if (click_X < boardEdgeSize - cellSize / 2
       || click_X > (rect.right - rect.left - boardEdgeSize + cellSize / 2))
       return false;
