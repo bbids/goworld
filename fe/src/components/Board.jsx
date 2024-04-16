@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import bstone from '../assets/bstone.png';
 import wstone from '../assets/wstone.png';
+import placementAudio from '../assets/stone_placement.wav';
 import { UserContext } from '../contexts/UserContext';
 import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
 import { connection } from '../webSocket/connection';
@@ -36,6 +37,7 @@ const Board = ({ game }) => {
   const [cellSize, setCellSize] = useState();
   const [edgeSize, setBoardEdgeSize] = useState();
   const [stoneImages, setStoneImages] = useState({});
+  const [audio] = useState(new Audio(placementAudio));
 
   const edgeFactor = useMemo(() => {
     if (!game.boardSize) return;
@@ -49,13 +51,13 @@ const Board = ({ game }) => {
     const blackStoneImg = new Image();
     blackStoneImg.src = bstone;
     blackStoneImg.onload = () => {
-      setStoneImages(prevState => ({ ...prevState, blackStone: blackStoneImg}));
+      setStoneImages(prevState => ({ ...prevState, blackStone: blackStoneImg }));
     };
 
     const whiteStoneImg = new Image();
     whiteStoneImg.src = wstone;
     whiteStoneImg.onload = () => {
-      setStoneImages(prevState => ({ ...prevState, whiteStone: whiteStoneImg}));
+      setStoneImages(prevState => ({ ...prevState, whiteStone: whiteStoneImg }));
     };
   }, []);
 
@@ -82,7 +84,7 @@ const Board = ({ game }) => {
       // TBD
       if (window.innerWidth < window.innerHeight) {
         newHeight = newWidth = window.innerWidth;
-      } else if (canvasRef.current.height !== 576){
+      } else if (canvasRef.current.height !== 576) {
         newHeight = newWidth = 576;
       } else {
         return;
@@ -154,9 +156,10 @@ const Board = ({ game }) => {
       else
         stoneImg = stoneImages.whiteStone;
 
-      if(stoneImg) {
+      if (stoneImg) {
         ctx.drawImage(stoneImg, x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
       }
+      audio.play();
     };
 
     document.addEventListener('DRAW_STONE', drawStone);
@@ -164,7 +167,7 @@ const Board = ({ game }) => {
     return () => {
       document.removeEventListener('DRAW_STONE', drawStone);
     };
-  }, [stoneImages, cellSize, edgeSize]);
+  }, [stoneImages, cellSize, edgeSize, audio]);
 
 
   // render the board
@@ -184,7 +187,7 @@ const Board = ({ game }) => {
       cellSize
     });
 
-    for(let row = 0; row < game.board.length; row++) {
+    for (let row = 0; row < game.board.length; row++) {
       for (let col = 0; col < game.board[row].length; col++) {
         if (game.board[row][col] !== 0) {
           const ev = new CustomEvent('DRAW_STONE', {
