@@ -29,6 +29,9 @@ const getEventListeners = () => {
       callback: () => {
         console.warn('GAME OVER');
         connection.reset();
+
+        const resetEvent = new CustomEvent('resetEvent');
+        document.dispatchEvent(resetEvent);
       }
     }
     /*{

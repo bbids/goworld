@@ -25,9 +25,6 @@ const connection = {
       this.websocket.raw.close();
       this.websocket = null;
       this.dispatched = false;
-
-      const resetEvent = new CustomEvent('resetEvent');
-      document.dispatchEvent(resetEvent);
     }
   },
 
