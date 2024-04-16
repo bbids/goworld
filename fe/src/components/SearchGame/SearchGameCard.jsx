@@ -63,7 +63,10 @@ const SearchGameCard = () => {
           >Stop</button>
         </div>
         :
-        <SearchForm startSearching={startSearching} />
+        <SearchForm
+          startSearching={startSearching}
+          selectedBoardSizeRef={selectedBoardSizeRef}
+        />
       }
     </div>
   );
