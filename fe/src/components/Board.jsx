@@ -86,12 +86,11 @@ const Board = ({ game }) => {
       // TBD
       if (window.innerWidth < window.innerHeight) {
         newHeight = newWidth = window.innerWidth;
-      } else if (canvasRef.current.height !== 576) {
-        newHeight = newWidth = 576;
+      } else if (canvasRef.current.height !== Math.floor(0.9 * window.innerHeight)) {
+        newHeight = newWidth = Math.floor(0.9 * window.innerHeight);
       } else {
         return;
       }
-
       canvasRef.current.width = newWidth;
       canvasRef.current.height = newHeight;
 
@@ -234,9 +233,7 @@ const Board = ({ game }) => {
       <div id='lastMove'></div>
       <canvas
         data-testid='board'
-        ref={canvasRef}
-        width={576}
-        height={576} />
+        ref={canvasRef}/>
     </div>
   );
 };
