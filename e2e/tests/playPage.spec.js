@@ -6,7 +6,7 @@ test.describe('Visiting the play page', () => {
     await page.goto('/play');
 
     // Expect a title "to contain" a substring.
-    await expect(page.getByRole('heading', { name: 'Go World' })).toBeVisible();
+    await expect(page.getByText('GoWorld')).toBeVisible();
   });
 
   test('has play button', async ({ page }) => {
