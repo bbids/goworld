@@ -101,6 +101,7 @@ const Board = ({ game }) => {
       setBoardEdgeSize(newEdgeSize);
     }
 
+    handleResize();
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -158,8 +159,8 @@ const Board = ({ game }) => {
 
       if (stoneImg) {
         ctx.drawImage(stoneImg, x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
+        audio.play();
       }
-      audio.play();
     };
 
     document.addEventListener('DRAW_STONE', drawStone);
@@ -194,7 +195,7 @@ const Board = ({ game }) => {
             detail: {
               row,
               col,
-              color: game.board[row][col] === 'B' ? 'BLACK' : 'WHITE'
+              color: game.board[row][col] === 'B' ? 'BLACK' : 'WHITE',
             }
           });
           document.dispatchEvent(ev);
