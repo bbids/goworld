@@ -91,7 +91,8 @@ const handleMoveRequest = ({ wsData, ws, gameId }) => {
     mutation: {
       board,
       playerTurn: gameData.playerTurn,
-      pass: gameData.pass
+      pass: gameData.pass,
+      lastMove: { row, col }
     }
   });
 

@@ -7,6 +7,8 @@ import { UserContext } from '../contexts/UserContext';
 import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../utils/canvas';
 import { connection } from '../webSocket/connection';
 
+import { lastMove, board } from './Board.module.css';
+
 /*
   1) User places a stone
   2) Board freezes ???
@@ -139,7 +141,6 @@ const Board = ({ game }) => {
     };
   }, [user, cellSize, edgeSize]);
 
-
   // Draw stone
   useEffect(() => {
     const drawStone = (event) => {
@@ -202,16 +203,40 @@ const Board = ({ game }) => {
         }
       }
     }
-  }, [game.board, game.boardSize, cellSize, dimension, edgeSize]);
 
+  }, [game.board, game.boardSize, game.lastMove, cellSize, dimension, edgeSize]);
+
+
+  useEffect(() => {
+    if (!game.lastMove)
+      return;
+
+    const { row, col } = game.lastMove;
+
+    const x = col * cellSize + edgeSize;
+    const y = row * cellSize + edgeSize;
+
+    const div = document.getElementById('lastMove');
+    div.className = lastMove;
+    div.style.position = 'absolute';
+    div.style.height = `${cellSize / 3}px`;
+    div.style.width = `${cellSize / 3}px`;
+    div.style.left = `${x - cellSize / 6}px`;
+    div.style.top = `${y - cellSize / 6}px`;
+  }, [game.lastMove, cellSize, edgeSize]);
 
   function getCellSize(height, edgeSize, boardSize) {
     return (height - 2 * edgeSize) / (boardSize - 1);
   }
 
   return (
-    <div id='board'>
-      <canvas data-testid='board' ref={canvasRef} width={576} height={576} />
+    <div id='board' className={board}>
+      <div id='lastMove'></div>
+      <canvas
+        data-testid='board'
+        ref={canvasRef}
+        width={576}
+        height={576} />
     </div>
   );
 };
