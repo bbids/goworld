@@ -32,11 +32,13 @@
 }
 
 .left {
-  background-color: red;
+  background-color: black;
+  color: white;
 }
 
 .right {
-  background-color: aqua;
+  background-color: white;
+  color: black;
 }
 
 .sendWrapper {
