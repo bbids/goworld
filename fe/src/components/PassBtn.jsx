@@ -1,6 +1,6 @@
 import { connection } from '../webSocket/connection';
 
-const PassBtn = () => {
+const PassBtn = ({ classes }) => {
 
   const handleClick = () => {
     connection.send(JSON.stringify({
@@ -11,7 +11,10 @@ const PassBtn = () => {
 
   return (
     <>
-      <button onClick={handleClick}>Pass</button>
+      <button
+        onClick={handleClick}
+        className={classes}
+      >Pass</button>
     </>
   );
 };

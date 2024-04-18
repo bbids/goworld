@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { mobileButtons, mobileBtn} from './GameSideBar.module.css';
+import PassBtn from '../PassBtn';
 
 const MobileGameSidebar = () => {
   const [mobileNavState, setMobileNavState] = useState('board');
@@ -58,10 +59,13 @@ const MobileGameSidebar = () => {
           className={mobileBtn}
         >{'<'}</button>
 
-        <button
-          onClick={onExitClick}
-          className={mobileBtn}
-        >Exit</button>
+        <div>
+          <button
+            onClick={onExitClick}
+            className={mobileBtn}
+          >Exit</button>
+          <PassBtn classes={mobileBtn}/>
+        </div>
 
         <button
           onClick={onRightClick}
