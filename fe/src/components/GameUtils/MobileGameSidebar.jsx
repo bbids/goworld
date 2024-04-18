@@ -12,10 +12,14 @@ const MobileGameSidebar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (mobileNavState === 'board') {
+    const setBoardState = () => {
       document.getElementById('userCards').classList.remove('hidden');
       document.getElementById('board').classList.remove('hidden');
       document.getElementById('chatbox').classList.add('hidden');
+    };
+
+    if (mobileNavState === 'board') {
+      setBoardState();
       setNavInd(0);
     }
     else if (mobileNavState === 'chatbox') {
@@ -24,6 +28,11 @@ const MobileGameSidebar = () => {
       document.getElementById('board').classList.add('hidden');
       setNavInd(1);
     }
+
+    return () => {
+      // we want to reset to default mode when leaving mobile mode
+      setBoardState();
+    };
   }, [mobileNavState]);
 
   const onLeftClick = () => {
