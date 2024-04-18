@@ -5,7 +5,6 @@ const OptionalBtn = ({ itemId, text }) => {
 
 
   const viewItem = () => {
-    console.log('hear');
     document.getElementById(itemId).classList.remove('hidden');
     if (window.innerWidth < 800) {
       document.getElementById('board').classList.add('hidden');

@@ -5,8 +5,6 @@ import { openGame, join } from './OpenGameCard.module.css';
 const OpenGameCard = ({ gameData }) => {
   const { gameId, status, boardSize } = gameData;
 
-  console.log(gameData);
-
   return (
     <div className={openGame}>
       <p>ID: {gameId}</p>
