@@ -23,12 +23,19 @@ const handleGameReady = ({ ws, gameId }) => {
   gameData.blackPlayer = 0;
   gameData.whitePlayer = 1;
 
+  const dataToSend = {
+    type: 'EVENT',
+    eventName: 'GAME_START',
+    mutation: gameData
+  };
+
   wsServer.clients.forEach(client => {
-    client.send(JSON.stringify({
-      type: 'EVENT',
-      eventName: 'GAME_START',
-      mutation: gameData
-    }));
+    if (client.uuid === playersUUID[0]) {
+      dataToSend.color = 'black';
+    } else {
+      dataToSend.color = 'white';
+    }
+    client.send(JSON.stringify(dataToSend));
   });
 };
 

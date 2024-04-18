@@ -36,6 +36,20 @@ const getEventListeners = () => {
       }
     },
     {
+      listenerName: 'colorInformation',
+      eventName: 'GAME_START',
+      callback: ({ wsData }) => {
+        const color = wsData.color;
+
+        const colorEvent = new CustomEvent('GAME_START', {
+          detail: {
+            color
+          }
+        });
+        document.dispatchEvent(colorEvent);
+      }
+    },
+    {
       listenerName: 'endgame',
       eventName: 'GAME_OVER',
       callback: () => {

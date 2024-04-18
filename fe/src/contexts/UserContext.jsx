@@ -3,6 +3,7 @@ import { createContext, useReducer } from 'react';
 const initialState = {
   userStatus: null,
   gameId: null,
+  color: null
 };
 
 const userReducer = (state, action) => {
@@ -16,6 +17,11 @@ const userReducer = (state, action) => {
     return {
       gameId: action.payload.gameId,
       userStatus: 'QUEUE'
+    };
+  case 'SET_COLOR':
+    return {
+      ...state,
+      color: action.payload.color
     };
   default:
     return { ...state };

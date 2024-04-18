@@ -9,6 +9,7 @@ import UserCards from '../components/GameUtils/UserCards';
 import MobileGameSidebar from '../components/GameUtils/MobileGameSidebar';
 import WebGameSidebar from '../components/GameUtils/WebGameSidebar';
 import ChatBox from '../components/ChatBox/ChatBox';
+import logger from '../utils/logger';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -40,6 +41,23 @@ const Game = () => {
       document.removeEventListener('mutation', callback);
     };
   }, []);
+
+
+  // GAME_START listener (color information, uuid?...)
+  useEffect(() => {
+    const callback = (event) => {
+      const color = event.detail.color;
+      setUser({ type: 'SET_COLOR', payload: color });
+      logger.dev('Your color is', color);
+    };
+
+    document.addEventListener('GAME_START', callback);
+
+    return () => {
+      document.removeEventListener('GAME_START', callback);
+    };
+  }, [setUser]);
+
 
   // initialize after connection
   useEffect(() => {
