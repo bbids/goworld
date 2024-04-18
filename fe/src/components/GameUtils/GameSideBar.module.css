@@ -1,8 +1,9 @@
 .userCard {
-  display: inline-block;
+  display: inline-flex;
+  font-size: 1.3em;
   height: 100px;
   width: 50%;
-  border: 1px dotted whitesmoke;
+  border: 1px solid rgb(75, 74, 77);
   word-wrap: break-word;
 }
 
@@ -62,7 +63,12 @@
     width: 100%;
     padding-right: 15%;
   }
+
   .buttons {
     column-gap: 1em;
+  }
+
+  .userCard {
+    height: 100%;
   }
 }
