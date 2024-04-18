@@ -12,16 +12,17 @@ const userReducer = (state, action) => {
   case 'SET_USERSTATUS':
     return { ...state, userStatus: action.payload};
   case 'RESET':
-    return { userStatus: null, gameId: null }; // add leaver event where gameId isn't reset?
+    return { userStatus: null, gameId: null, color: null }; // add leaver event where gameId isn't reset?
   case 'START_QUEUE':
     return {
+      ...state,
       gameId: action.payload.gameId,
       userStatus: 'QUEUE'
     };
   case 'SET_COLOR':
     return {
       ...state,
-      color: action.payload.color
+      color: action.payload
     };
   default:
     return { ...state };
