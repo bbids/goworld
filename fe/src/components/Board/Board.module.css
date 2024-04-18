@@ -1,5 +1,6 @@
 .board {
   position: relative;
+  margin: auto;
 }
 
 .lastMove {

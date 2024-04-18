@@ -1,15 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
+import { UserContext } from '../contexts/UserContext';
+
+
 import { connection } from '../webSocket/connection';
-import Board from '../components/Board';
-import PassBtn from '../components/PassBtn';
-import ChatBox from '../components/ChatBox/ChatBox';
+import Board from '../components/Board/Board';
+import UserCards from '../components/GameUtils/UserCards';
+import MobileGameSidebar from '../components/GameUtils/MobileGameSidebar';
+import WebGameSidebar from '../components/GameUtils/WebGameSidebar';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
  * somewhere else
- */
+*/
 
 /**
  * This route component should manage the actual
@@ -19,13 +22,9 @@ import ChatBox from '../components/ChatBox/ChatBox';
 const Game = () => {
   const { user, setUser } = useContext(UserContext);
   const [game, setGame] = useState({});
-  const gameId = useParams().gameId;
+  const [mobileMode, setMobileMode] = useState(window.innerWidth < 800);
 
-  // some UI
-  const [status, setStatus] = useState();
-  useEffect(() => {
-    setStatus(game.status);
-  }, [game.status]);
+  const gameId = useParams().gameId;
 
   // Game data mutation
   useEffect(() => {
@@ -75,18 +74,41 @@ const Game = () => {
     connection.dispatchEvent();
   }, [user, setUser, gameId]);
 
+
+  // hide sidebar by default on start
+  useEffect(() => {
+    document.getElementById('sidebar').classList.add('hidden');
+
+    return () => {
+      document.getElementById('sidebar').classList.remove('hidden');
+    };
+  }, []);
+
+
+  // resize listener for mobile/web mode switch
+  useEffect(() => {
+    const callback = () => {
+      const isMobile = window.innerWidth <= 768;
+      setMobileMode(isMobile);
+    };
+
+    window.addEventListener('resize', callback);
+
+    return () => {
+      window.removeEventListener('resize', callback);
+    };
+  }, []);
+
   return (
     <div id='game' className='content'>
-
+      <UserCards game={game} />
       <Board game={game} />
 
-      <div id='game_sidebar'>
-        <div id='game_foot'>
-          <PassBtn />
-          <p>We can now see status: {status}</p>
-        </div>
-        <ChatBox />
-      </div>
+      {mobileMode ?
+        <MobileGameSidebar />
+        :
+        <WebGameSidebar game={game} />
+      }
     </div>
   );
 };

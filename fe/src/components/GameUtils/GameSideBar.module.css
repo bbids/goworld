@@ -1,0 +1,58 @@
+.userCard {
+  display: inline-block;
+  height: 100px;
+  width: 50%;
+  border: 1px dotted whitesmoke;
+  word-wrap: break-word;
+}
+
+.content {
+  height: 100%;
+  width: calc(0.9 * 100vw);
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 1em;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  row-gap: 1em;
+  column-gap: 1em;
+}
+
+.buttons button {
+  height: 3em;
+  width: 7em;
+}
+
+.mobileButtons {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly
+}
+
+.mobileBtn {
+  width: 4em;
+  height: 2em;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  border: 1px solid grey;
+  border-radius: 10%;
+}
+
+@media screen and (min-width: 800px) {
+  .content {
+    width: 100%;
+    padding-right: 15%;
+  }
+  .buttons {
+    column-gap: 1em;
+  }
+}

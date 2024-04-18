@@ -1,9 +1,0 @@
-.board {
-  position: relative;
-}
-
-.lastMove {
-  background-color: red;
-  border: 1px solid black;
-  position: absolute;
-}

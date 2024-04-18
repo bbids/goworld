@@ -1,6 +1,8 @@
 .chatBox {
-  height: 500px;
-  max-width: 300px;
+  margin-top: 10%;
+  height: 50vh;
+  width: 100%;
+
   border: 1px solid gray;
   background-color: rgb(200, 200, 200);
   position: relative;
@@ -10,33 +12,27 @@
   grid-column: 1 / -1;
 }
 
-@media screen and (min-width: 1024px) {
-  #chatbox {
-    grid-row: 1 / 2;
-    grid-column: 2 / 3;
-  }
-}
-
 .scroller {
   height: 100%;
-  max-height: 551px;
-  padding-bottom: 15%;
+  padding-bottom: 3em;
+  overflow-x: hidden;
 }
 
 .message {
-  margin: 10px 3px;
+  margin: 0.5em 0.3em;
   background-color: rgb(182, 182, 165);
-  width: fit-content;
-  padding: 1em;
+  max-width: fit-content;
+  overflow-wrap: break-word;
+  padding: 0.5em;
   border-radius: 0.5em;
 }
 
-.left {
+.blackMsg {
   background-color: black;
   color: white;
 }
 
-.right {
+.whiteMsg {
   background-color: white;
   color: black;
 }

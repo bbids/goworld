@@ -4,7 +4,7 @@ import AutoScrollBottom from '../AutoScrollBottom/AutoScrollBottom';
 import logger from '../../utils/logger';
 
 import {
-  chatBox, message, sendWrapper, sendForm, left, right
+  chatBox, message, sendWrapper, sendForm, blackMsg, whiteMsg, scroller
 } from './ChatBox.module.css';
 
 const ChatBox = () => {
@@ -17,9 +17,9 @@ const ChatBox = () => {
 
       let className = null;
       if (playerId === 0) {
-        className = left;
+        className = blackMsg;
       } else if (playerId === 1){
-        className = right;
+        className = whiteMsg;
       }
 
       const newMessageWrapper = { message, className};
@@ -51,8 +51,8 @@ const ChatBox = () => {
 
 
   return (
-    <div id='chatbox' className={chatBox}>
-      <AutoScrollBottom>
+    <div id='chatbox' className={`${chatBox} hidden`}>
+      <AutoScrollBottom classes={scroller}>
         {messages.map((msgWrapper, ind) => {
           return <p
             key={ind}

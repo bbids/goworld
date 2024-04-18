@@ -35,7 +35,6 @@ import { lastMove, board } from './Board.module.css';
 const Board = ({ game }) => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef(null);
-  const [dimension, setDimension] = useState();
   const [cellSize, setCellSize] = useState();
   const [edgeSize, setBoardEdgeSize] = useState();
   const [stoneImages, setStoneImages] = useState({});
@@ -45,8 +44,6 @@ const Board = ({ game }) => {
     if (!game.boardSize) return;
     return 1 / game.boardSize;
   }, [game.boardSize]);
-
-  // todo: async loading board?
 
   // Preload stone images
   useEffect(() => {
@@ -64,14 +61,13 @@ const Board = ({ game }) => {
   }, []);
 
 
-  // some board properties
+  // some board properties needed for drawing
   useEffect(() => {
     if (!canvasRef.current) return;
     if (!game.boardSize) return;
 
     const newEdgeSize = edgeFactor * canvasRef.current.height;
     const newCellSize = getCellSize(canvasRef.current.height, newEdgeSize, game.boardSize);
-    setDimension(canvasRef.current.height);
     setCellSize(newCellSize);
     setBoardEdgeSize(newEdgeSize);
   }, [game.boardSize, edgeFactor]);
@@ -84,8 +80,8 @@ const Board = ({ game }) => {
 
       let newHeight, newWidth;
       // TBD
-      if (window.innerWidth < window.innerHeight) {
-        newHeight = newWidth = window.innerWidth;
+      if (window.innerWidth < window.innerHeight ) {
+        newHeight = newWidth = Math.floor(0.9 * window.innerWidth);
       } else if (canvasRef.current.height !== Math.floor(0.9 * window.innerHeight)) {
         newHeight = newWidth = Math.floor(0.9 * window.innerHeight);
       } else {
@@ -97,12 +93,13 @@ const Board = ({ game }) => {
       const newEdgeSize = edgeFactor * newHeight;
       const newCellSize = getCellSize(canvasRef.current.height, newEdgeSize, game.boardSize);
 
-      setDimension(newWidth);
       setCellSize(newCellSize);
       setBoardEdgeSize(newEdgeSize);
     }
 
+    // run immediately to set correct size
     handleResize();
+
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -159,7 +156,6 @@ const Board = ({ game }) => {
 
       if (stoneImg) {
         ctx.drawImage(stoneImg, x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
-        audio.play();
       }
     };
 
@@ -203,9 +199,10 @@ const Board = ({ game }) => {
       }
     }
 
-  }, [game.board, game.boardSize, game.lastMove, cellSize, dimension, edgeSize]);
+  }, [game.board, game.boardSize, cellSize, edgeSize]);
 
 
+  // red square at the last placed stone
   useEffect(() => {
     if (!game.lastMove)
       return;
@@ -222,7 +219,9 @@ const Board = ({ game }) => {
     div.style.width = `${cellSize / 3}px`;
     div.style.left = `${x - cellSize / 6}px`;
     div.style.top = `${y - cellSize / 6}px`;
-  }, [game.lastMove, cellSize, edgeSize]);
+
+    audio.play();
+  }, [game.lastMove, cellSize, edgeSize, audio]);
 
   function getCellSize(height, edgeSize, boardSize) {
     return (height - 2 * edgeSize) / (boardSize - 1);
