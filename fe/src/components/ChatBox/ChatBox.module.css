@@ -1,15 +1,18 @@
 .chatBox {
   margin-top: 10%;
-  height: 50vh;
+  height: 75vh;
   width: 100%;
 
   border: 1px solid gray;
   background-color: rgb(200, 200, 200);
   position: relative;
   color: black;
+}
 
-  grid-row: 2 / 3;
-  grid-column: 1 / -1;
+@media screen and (min-width: 768px) {
+  .chatBox {
+    height: 50vh;
+  }
 }
 
 .scroller {

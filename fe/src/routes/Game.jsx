@@ -8,6 +8,7 @@ import Board from '../components/Board/Board';
 import UserCards from '../components/GameUtils/UserCards';
 import MobileGameSidebar from '../components/GameUtils/MobileGameSidebar';
 import WebGameSidebar from '../components/GameUtils/WebGameSidebar';
+import ChatBox from '../components/ChatBox/ChatBox';
 
 /**
  * Loader checks if game is valid, if it isn't it redirects to
@@ -109,6 +110,8 @@ const Game = () => {
         :
         <WebGameSidebar game={game} />
       }
+
+      <ChatBox />
     </div>
   );
 };

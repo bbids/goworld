@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import ChatBox from '../ChatBox/ChatBox';
 import { useNavigate } from 'react-router-dom';
 
 import { mobileButtons, mobileBtn} from './GameSideBar.module.css';
@@ -44,7 +43,6 @@ const MobileGameSidebar = () => {
 
   return (
     <>
-      <ChatBox />
       <div className={mobileButtons}>
         <button
           onClick={onLeftClick}
