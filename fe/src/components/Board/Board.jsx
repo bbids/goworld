@@ -2,12 +2,13 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import bstone from '../../assets/bstone.png';
 import wstone from '../../assets/wstone.png';
-import placementAudio from '../../assets/stone_placement.wav';
+import placementSound from '../../assets/stone_placement.wav';
 import { UserContext } from '../../contexts/UserContext';
 import { drawBackgroundDefault, drawGrid, getRowAndCol } from '../../utils/canvas';
 import { connection } from '../../webSocket/connection';
 
 import { lastMove, board } from './Board.module.css';
+import logger from '../../utils/logger';
 
 /*
   1) User places a stone
@@ -38,7 +39,7 @@ const Board = ({ game }) => {
   const [cellSize, setCellSize] = useState();
   const [edgeSize, setBoardEdgeSize] = useState();
   const [stoneImages, setStoneImages] = useState({});
-  const [audio] = useState(new Audio(placementAudio));
+  const [placementAudio] = useState(new Audio(placementSound));
 
   const edgeFactor = useMemo(() => {
     if (!game.boardSize) return;
@@ -61,7 +62,7 @@ const Board = ({ game }) => {
   }, []);
 
 
-  // some board properties needed for drawing
+  // compute board properties needed for drawing
   useEffect(() => {
     if (!canvasRef.current) return;
     if (!game.boardSize) return;
@@ -137,6 +138,7 @@ const Board = ({ game }) => {
     };
   }, [user, cellSize, edgeSize]);
 
+
   // Draw stone
   useEffect(() => {
     const drawStone = (event) => {
@@ -156,6 +158,8 @@ const Board = ({ game }) => {
 
       if (stoneImg) {
         ctx.drawImage(stoneImg, x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
+      } else {
+        logger.devError('Stone image not loaded');
       }
     };
 
@@ -164,7 +168,7 @@ const Board = ({ game }) => {
     return () => {
       document.removeEventListener('DRAW_STONE', drawStone);
     };
-  }, [stoneImages, cellSize, edgeSize, audio]);
+  }, [stoneImages, cellSize, edgeSize]);
 
 
   // render the board
@@ -219,13 +223,22 @@ const Board = ({ game }) => {
     div.style.width = `${cellSize / 3}px`;
     div.style.left = `${x - cellSize / 6}px`;
     div.style.top = `${y - cellSize / 6}px`;
+  }, [game.lastMove, cellSize, edgeSize]);
 
-    audio.play();
-  }, [game.lastMove, cellSize, edgeSize, audio]);
 
+  // audio on new stone placement
+  useEffect(() => {
+    if (!game.lastMove) return;
+    placementAudio.play();
+  }, [game.lastMove, placementAudio]);
+
+
+
+  // inline function
   function getCellSize(height, edgeSize, boardSize) {
     return (height - 2 * edgeSize) / (boardSize - 1);
   }
+
 
   return (
     <div id='board' className={board}>
