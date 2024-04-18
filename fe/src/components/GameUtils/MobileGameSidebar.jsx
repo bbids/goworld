@@ -13,9 +13,9 @@ const MobileGameSidebar = () => {
 
   useEffect(() => {
     const setBoardState = () => {
-      document.getElementById('userCards').classList.remove('hidden');
-      document.getElementById('board').classList.remove('hidden');
-      document.getElementById('chatbox').classList.add('hidden');
+      document.getElementById('userCards')?.classList.remove('hidden');
+      document.getElementById('board')?.classList.remove('hidden');
+      document.getElementById('chatbox')?.classList.add('hidden');
     };
 
     if (mobileNavState === 'board') {
@@ -23,9 +23,9 @@ const MobileGameSidebar = () => {
       setNavInd(0);
     }
     else if (mobileNavState === 'chatbox') {
-      document.getElementById('chatbox').classList.remove('hidden');
-      document.getElementById('userCards').classList.add('hidden');
-      document.getElementById('board').classList.add('hidden');
+      document.getElementById('chatbox')?.classList.remove('hidden');
+      document.getElementById('userCards')?.classList.add('hidden');
+      document.getElementById('board')?.classList.add('hidden');
       setNavInd(1);
     }
 
