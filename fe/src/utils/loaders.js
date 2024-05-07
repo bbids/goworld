@@ -1,4 +1,3 @@
-import { redirect } from 'react-router-dom';
 import gameService from '../services/game';
 
 /**
@@ -7,19 +6,21 @@ import gameService from '../services/game';
  *
  */
 
+const baseUrl = '/api/play';
+
 
 export async function getGamesLoader() {
   const gamesData = await gameService.getGamesData();
   if (Object.keys(gamesData).length === 0
-      && gamesData.constructor === Object)
+    && gamesData.constructor === Object)
     return null;
 
   return gamesData;
 }
 
-export async function gameValidLoader({ params }) {
-  const response = await gameService.checkGameExists(params.gameId);
-  if (!response)
-    return redirect('/play');
+export async function getGameLoader({ params }) {
+  const response = await fetch(`${baseUrl}/game/${params.gameId}`);
+  if (response.status === 404)
+    throw new Response('Game not found', { status: 404 });
   return response;
 }

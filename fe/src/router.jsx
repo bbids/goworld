@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import { gameValidLoader } from './utils/loaders';
+import { getGameLoader } from './utils/loaders';
 
 import { UserContextProvider } from './contexts/UserContext';
 
@@ -8,6 +8,7 @@ import Home from './routes/Home';
 import Game from './routes/Game';
 import ErrorPage from './routes/ErrorPage';
 import Play from './routes/Play';
+import GameBoundaryError from './GameError';
 
 const router = createBrowserRouter([
   {
@@ -31,7 +32,8 @@ const router = createBrowserRouter([
       {
         path: '/game/:gameId',
         element: <Game />,
-        loader: gameValidLoader // todo: find alternative solution
+        errorElement: <GameBoundaryError />,
+        loader: getGameLoader // todo: find alternative solution
       },
     ]
   },
