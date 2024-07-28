@@ -1,6 +1,6 @@
 Idea: online go
 
-Status: in development
+Status: deprecated
 
 Screenshots  
 
